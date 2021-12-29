@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjektKarolewski.Models;
 using ProjektKarolewski.Services;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
 
 namespace ProjektKarolewski.Controllers
 {
@@ -49,7 +50,7 @@ namespace ProjektKarolewski.Controllers
 
             var id = _deviceService.Create(dto);
 
-            return Created($"/api/device/{id}", null);
+            return Created($"/api/device/{id}", JObject.Parse("{'status': 200}"));
         }
 
         [HttpGet]

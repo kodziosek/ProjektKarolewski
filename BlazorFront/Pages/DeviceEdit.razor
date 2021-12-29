@@ -1,0 +1,108 @@
+﻿@page "/deviceedit"
+@using BlazorFront.Models
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.DropDowns
+@using ProjektKarolewski.Models
+
+
+@{ 
+    var SearchTool = new List<string>() { "Add", "Edit", "Update", "Delete", "Cancel", "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
+
+<SfGrid DataSource="@Device" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler" TValue="DeviceData"></GridEvents>
+    <GridColumns>
+        <GridColumn IsPrimaryKey="true" Field="@nameof(DeviceData.Id)" HeaderText="ID"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.Name)" HeaderText="Nazwa"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.NameInPassport)" HeaderText="Nazwa paszportowa"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.AcquisitionDate)" HeaderText="Data nabycia"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.ProductionDate)" HeaderText="Data produkcji"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.PassportNumber)" HeaderText="Numer paszportu"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.InventoryNumber)" HeaderText="Numer inwentarzowy"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.SerialNumber)" HeaderText="Numer seryjny"></GridColumn>
+        <GridColumn AllowFiltering="false" Field="@nameof(DeviceData.Comments)" HeaderText="Komentarz"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.Ward)" HeaderText="Oddział">
+            <EditTemplate>
+                <SfDropDownList DataSource="@Wards" TItem="WardDto" TValue="int">
+                    <DropDownListEvents TItem="WardDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+        <GridColumn Field="@nameof(DeviceData.Producer)" HeaderText="Producent">
+            <EditTemplate>
+                <SfDropDownList ID="ProducerList" DataSource="@Producers" TItem="ProducerDto" TValue="int">
+                    <DropDownListEvents TItem="ProducerDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+
+
+@code{
+
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+    public DeviceResults Datas { get; set; }
+
+    public List<DeviceData> Device { get; set; }
+    public List<WardDto> Wards { get; set; }
+    public List<ProducerDto> Producers { get; set; }
+    ProducerDto DropDownSelectedProducer = new ProducerDto();
+    WardDto DropDownSelectedWard = new WardDto();
+
+    [Inject]
+    public IDeviceService DeviceService { get; set; }
+
+    [Inject]
+    public IWardService WardService { get; set; }
+
+    [Inject]
+    public IProducerService ProducerService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Datas = (await DeviceService.GetDevices());
+        Device = Datas.devices;
+        Wards = (await WardService.GetWards()).ToList();
+        Producers = (await ProducerService.GetProducers()).ToList();
+    }
+
+
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<ProducerDto> args)
+    {
+        DropDownSelectedProducer.Id = args.ItemData.Id;
+    }
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<WardDto> args)
+    {
+        DropDownSelectedWard.Id = args.ItemData.Id;
+    }
+
+    public async void ActionBeginHandler(ActionEventArgs<DeviceData> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if(Args.Action == "Add")
+            {
+                Args.Data.ProducerId = DropDownSelectedProducer.Id;
+                Args.Data.WardId = DropDownSelectedWard.Id;
+                await DeviceService.AddDevice(Args.Data);
+            }
+            else
+            {
+                await DeviceService.UpdateDevice(Args.Data);
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await DeviceService.DeleteDevice(Args.Data.Id);
+        }
+    }
+}

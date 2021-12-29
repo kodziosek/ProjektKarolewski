@@ -1,0 +1,46 @@
+﻿@page "/"
+@using BlazorFront.Models
+@using Syncfusion.Blazor.Grids
+
+
+@{
+    var SearchTool = new List<string>() { "Search" };
+
+}
+
+<SfGrid DataSource ="@Device" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridColumns>
+        <GridColumn Field="@nameof(DeviceData.Id)" HeaderText="ID"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.Name)" HeaderText="Nazwa"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.NameInPassport)" HeaderText="Nazwa paszportowa"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.AcquisitionDate)" HeaderText="Data nabycia"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.ProductionDate)" HeaderText="Data produkcji"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.PassportNumber)" HeaderText="Numer paszportu"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.InventoryNumber)" HeaderText="Numer inwentarzowy"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.SerialNumber)" HeaderText="Numer seryjny"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.Comments)" HeaderText="Komentarz"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.Ward)" HeaderText="Oddział"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.Producer)" HeaderText="Producent"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+
+@code{ 
+
+    public string[] pagerDropdown { get; set; } = new string[] {"5", "10", "15", "20" };
+
+    public DeviceResults Datas { get; set; }
+
+    public List<DeviceData> Device { get; set; }
+
+    [Inject]
+    public IDeviceService DeviceService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Datas = (await DeviceService.GetDevices());
+        Device = Datas.devices;
+    }
+}

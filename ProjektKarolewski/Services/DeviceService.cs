@@ -94,8 +94,8 @@ namespace ProjektKarolewski.Services
                 .Devices
                 .Include(d => d.Ward)
                 .Include(d => d.Producer)
-                .Where(d => query.SearchPhrase == null || (d.Name.ToLower().Contains(query.SearchPhrase.ToLower())
-                        || d.Comments.ToLower().Contains(query.SearchPhrase.ToLower())));
+                .Where(d => query.SearchPhrase == null || d.Name.ToLower().Contains(query.SearchPhrase.ToLower())
+                        || d.Comments.ToLower().Contains(query.SearchPhrase.ToLower()));
 
             if(!string.IsNullOrEmpty(query.SortBy))
             {
