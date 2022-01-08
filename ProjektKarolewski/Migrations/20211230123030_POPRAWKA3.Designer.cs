@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjektKarolewski.Entities;
 
 namespace ProjektKarolewski.Migrations
 {
     [DbContext(typeof(ProjektDbContext))]
-    partial class ProjektDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211230123030_POPRAWKA3")]
+    partial class POPRAWKA3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,6 +46,7 @@ namespace ProjektKarolewski.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AcquisitionDate")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -51,6 +54,7 @@ namespace ProjektKarolewski.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InventoryNumber")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -59,9 +63,11 @@ namespace ProjektKarolewski.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NameInPassport")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PassportNumber")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -69,6 +75,7 @@ namespace ProjektKarolewski.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ProductionDate")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 

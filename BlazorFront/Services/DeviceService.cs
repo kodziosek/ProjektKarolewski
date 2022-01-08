@@ -22,7 +22,7 @@ namespace BlazorFront.Services
 
         public async Task<DeviceResults> GetDevices()
         {
-            var response = await httpClient.GetAsync("api/device?pageSize=100&pageNumber=1");
+            var response = await httpClient.GetAsync("api/device?pageSize=1000&pageNumber=1");
             var json = await response.Content.ReadAsStringAsync();
             DeviceResults devices = JsonConvert.DeserializeObject<DeviceResults>(json);
             return devices;

@@ -9,7 +9,7 @@ namespace ProjektKarolewski.Models.Validators
 {
     public class DeviceQueryValidator : AbstractValidator<DeviceQuery>
     {
-        private int[] allowedPageSizes = new[] { 5, 10, 15, 100};
+        private int[] allowedPageSizes = new[] { 5, 10, 15, 100, 1000};
         private string[] allowedSortByColumnNames = new[] { nameof(Device.Name), nameof(Device.Producer), nameof(Device.Comments)};
         public DeviceQueryValidator()
         {

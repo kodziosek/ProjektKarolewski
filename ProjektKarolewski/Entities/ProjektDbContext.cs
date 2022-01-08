@@ -9,7 +9,7 @@ namespace ProjektKarolewski.Entities
     public class ProjektDbContext : DbContext
     {
         private string _connectionString =
-            "Server=DESKTOP-O14MHG2; Database=ProjektDb;Trusted_Connection=True";
+            "Server=LAPTOP-9GMMPIUH; Database=ProjektDb;Trusted_Connection=True";
         public DbSet<Device> Devices { get; set; }
         public DbSet<Ward> Wards { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
@@ -27,38 +27,31 @@ namespace ProjektKarolewski.Entities
         {
             modelBuilder.Entity<Device>()
                 .Property(d => d.Name)
-                .IsRequired()
-                .HasMaxLength(30);
+                .IsRequired();
 
             modelBuilder.Entity<Device>()
-                .Property(d => d.NameInPassport)
-                .IsRequired()
-                .HasMaxLength(30);
+                .Property(d => d.NameInPassport);
 
             modelBuilder.Entity<Device>()
                 .Property(d => d.AcquisitionDate)
-                .IsRequired()
-                .HasMaxLength(10);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Device>()
                 .Property(d => d.ProductionDate)
-                .IsRequired()
-                .HasMaxLength(10);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Device>()
                 .Property(d => d.PassportNumber)
-                .IsRequired()
-                .HasMaxLength(10);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Device>()
                 .Property(d => d.InventoryNumber)
-                .IsRequired()
-                .HasMaxLength(20);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Ward>()
                 .Property(w => w.Name)
                 .IsRequired()
-                .HasMaxLength(30);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Inspection>()
                 .Property(i => i.InspectionDate)
@@ -91,7 +84,7 @@ namespace ProjektKarolewski.Entities
             modelBuilder.Entity<Producer>()
                 .Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(30);
+                .HasMaxLength(60);
 
             modelBuilder.Entity<Fault>()
                 .Property(f => f.FaultDate)
