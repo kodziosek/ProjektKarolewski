@@ -2,32 +2,45 @@
 @using BlazorFront.Models
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Buttons
 @using ProjektKarolewski.Models
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrator")]
 
-
-@{ 
-    var SearchTool = new List<string>() { "Add", "Edit", "Update", "Delete", "Cancel", "Search" };
+@{
+    var SearchTool = new List<string>() { "Add", "Cancel", "Search" };
     System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
 }
 
-<SfGrid DataSource="@Device" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+
+
+<SfGrid @ref="deviceGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Device" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
-    <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true">
+        <HeaderTemplate>
+            <span>@GetHeaderText(context as DeviceData)</span>
+        </HeaderTemplate>
+        <FooterTemplate>
+            <SfButton OnClick="@Save" IsPrimary="true">@SaveButtonText</SfButton>
+            <SfButton OnClick="@Cancel">Anuluj</SfButton>
+        </FooterTemplate>
+    </GridEditSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" TValue="DeviceData"></GridEvents>
     <GridColumns>
-        <GridColumn IsPrimaryKey="true" Field="@nameof(DeviceData.Id)" HeaderText="ID"></GridColumn>
+        <GridColumn AllowAdding="false" IsPrimaryKey="true" Field="@nameof(DeviceData.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.Name)" HeaderText="Nazwa"></GridColumn>
-        <GridColumn Field="@nameof(DeviceData.NameInPassport)" HeaderText="Nazwa paszportowa"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.NameInPassport)" HeaderText="Nazwa paszportowa" Width="200"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.AcquisitionDate)" HeaderText="Data nabycia"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.ProductionDate)" HeaderText="Data produkcji"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.PassportNumber)" HeaderText="Numer paszportu"></GridColumn>
-        <GridColumn Field="@nameof(DeviceData.InventoryNumber)" HeaderText="Numer inwentarzowy"></GridColumn>
+        <GridColumn Field="@nameof(DeviceData.InventoryNumber)" HeaderText="Numer inwentarzowy" Width="200"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.SerialNumber)" HeaderText="Numer seryjny"></GridColumn>
         <GridColumn AllowFiltering="false" Field="@nameof(DeviceData.Comments)" HeaderText="Komentarz"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.Ward)" HeaderText="Oddział">
             <EditTemplate>
-                <SfDropDownList DataSource="@Wards" TItem="WardDto" TValue="int">
+                <SfDropDownList DataSource="@Wards" TItem="WardDto" TValue="int" @bind-Value="@((context as DeviceData).WardId)">
                     <DropDownListEvents TItem="WardDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
                     <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
                 </SfDropDownList>
@@ -35,15 +48,40 @@
         </GridColumn>
         <GridColumn Field="@nameof(DeviceData.Producer)" HeaderText="Producent">
             <EditTemplate>
-                <SfDropDownList ID="ProducerList" DataSource="@Producers" TItem="ProducerDto" TValue="int">
+                <SfDropDownList DataSource="@Producers" TItem="ProducerDto" TValue="int" @bind-Value="@((context as DeviceData).ProducerId)">
                     <DropDownListEvents TItem="ProducerDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
                     <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
                 </SfDropDownList>
             </EditTemplate>
         </GridColumn>
+        <GridColumn HeaderText="Akcje" Width="110">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
     </GridColumns>
 </SfGrid>
 
+<style>
+    .e-grid .e-headercell {
+        background-color: gray;
+    }
+
+    .e-headercell {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
 
 @code{
 
@@ -51,11 +89,15 @@
 
     public DeviceResults Datas { get; set; }
 
+    public string SaveButtonText { get; set; }
+
     public List<DeviceData> Device { get; set; }
     public List<WardDto> Wards { get; set; }
     public List<ProducerDto> Producers { get; set; }
     ProducerDto DropDownSelectedProducer = new ProducerDto();
     WardDto DropDownSelectedWard = new WardDto();
+
+    public SfGrid<DeviceData> deviceGrid { get; set; }
 
     [Inject]
     public IDeviceService DeviceService { get; set; }
@@ -75,6 +117,30 @@
         Producers = (await ProducerService.GetProducers()).ToList();
     }
 
+    public async Task Cancel()
+    {
+        await deviceGrid.CloseEdit();
+    }
+
+    public async Task Save()
+    {
+        await deviceGrid.EndEdit();
+    }
+
+    public string GetHeaderText(DeviceData device)
+    {
+        if (device.Id == 0)
+        {
+            SaveButtonText = "Dodaj";
+            return "Dodaj nowe urządzenie";
+        }
+        else
+        {
+            SaveButtonText = "Edytuj";
+            return $"Edytuj dane {device.Name}";
+        }
+    }
+
 
     public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<ProducerDto> args)
     {
@@ -87,17 +153,34 @@
 
     public async void ActionBeginHandler(ActionEventArgs<DeviceData> Args)
     {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            Args.Data = Args.PreviousData;
+        }
+
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
-            if(Args.Action == "Add")
+            if (Args.Action == "Add")
             {
                 Args.Data.ProducerId = DropDownSelectedProducer.Id;
                 Args.Data.WardId = DropDownSelectedWard.Id;
                 await DeviceService.AddDevice(Args.Data);
+                Datas = (await DeviceService.GetDevices());
+                Device = Datas.devices;
+                Wards = (await WardService.GetWards()).ToList();
+                Producers = (await ProducerService.GetProducers()).ToList();
+                deviceGrid.Refresh();
             }
             else
             {
+
                 await DeviceService.UpdateDevice(Args.Data);
+                Datas = (await DeviceService.GetDevices());
+                Device = Datas.devices;
+                Wards = (await WardService.GetWards()).ToList();
+                Producers = (await ProducerService.GetProducers()).ToList();
+                deviceGrid.Refresh();
+
             }
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))

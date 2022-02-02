@@ -16,6 +16,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using BlazorFront.Shared;
+using System.Net.Http;
+using Blazored.LocalStorage;
+using BlazorFront.AuthProviders;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BlazorFront
 {
@@ -37,7 +41,13 @@ namespace BlazorFront
             services.AddSyncfusionBlazor();
             services.AddLocalization();
             services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.AddBlazoredLocalStorage();
+            services.AddAuthenticationCore();
+            services.AddAuthorizationCore();
+            services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddSingleton(typeof(ISyncfusionStringLocalizer), typeof(SyncfusionLocalizer));
+            services.AddSingleton<HttpClient>();
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 // Define the list of cultures your app will support
@@ -64,6 +74,10 @@ namespace BlazorFront
             {
                 client.BaseAddress = new Uri("https://localhost:5001/");
             });
+            services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001/");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,7 +100,8 @@ namespace BlazorFront
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

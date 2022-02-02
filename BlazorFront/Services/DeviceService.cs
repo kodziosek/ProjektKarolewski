@@ -29,6 +29,7 @@ namespace BlazorFront.Services
         }
          public async Task<DeviceData> AddDevice(DeviceData device)
         {
+
             var response = await httpClient.PostAsJsonAsync<DeviceData>("api/device", device);
             return await response.Content.ReadFromJsonAsync<DeviceData>();
         }
@@ -38,8 +39,7 @@ namespace BlazorFront.Services
         }
         public async Task<DeviceData> UpdateDevice(DeviceData device)
         {
-            var response = await httpClient
-                .PutAsJsonAsync<DeviceData>($"api/device/{device.Id}", device);
+            var response = await httpClient.PutAsJsonAsync<DeviceData>($"api/device/{device.Id}", device);
             return await response.Content.ReadFromJsonAsync<DeviceData>();
         }
     }

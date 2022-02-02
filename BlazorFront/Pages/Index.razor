@@ -1,14 +1,17 @@
-﻿@page "/"
+﻿@page "/index"
 @using BlazorFront.Models
 @using Syncfusion.Blazor.Grids
 
 
-@{
-    var SearchTool = new List<string>() { "Search" };
 
-}
+    @{
+        var SearchTool = new List<string>() { "Add", "Edit", "Update", "Delete", "Cancel", "Search" };
+        System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+    }
 
-<SfGrid DataSource ="@Device" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+
+<SfGrid DataSource="@Device" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridColumns>
         <GridColumn Field="@nameof(DeviceData.Id)" HeaderText="ID"></GridColumn>
@@ -26,9 +29,9 @@
 </SfGrid>
 
 
-@code{ 
+@code{
 
-    public string[] pagerDropdown { get; set; } = new string[] {"5", "10", "15", "20" };
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
 
     public DeviceResults Datas { get; set; }
 

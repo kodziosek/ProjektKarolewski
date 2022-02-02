@@ -1,0 +1,81 @@
+﻿@layout LoginLayout
+@page "/"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@using BlazorFront.Models
+@using ProjektKarolewski.Models
+@using BlazorFront.Services
+@*@inject Blazored.SessionStorage.ISessionStarageSevice sessionStorage
+    Model="@user" OnValidSubmit="@ValidateUser"  @bind="user.EmailAddress"  @bind="user.Password"*@
+
+
+<center>
+    <div class="col-8 card">
+        <div class="col-12 row">
+            <p>&nbsp;</p>
+        </div>
+        <div class="col-12 row">
+            <div class="col-6" style="border-right: groove; display:flex; justify-content:center; align-items:center;">
+                <img src="Images\logo.png" style="width: 90%;" alt="Obrazek XD" />
+            </div>
+            <div class="col-6" style="border-left: thick;">
+                <EditForm Model="@_userForAuthentication" OnValidSubmit="ExecuteLogin">
+                    <div>
+                        <br /><br /><br /><br /><br />
+                    </div>
+                    <div>
+                        <h3 style="font-weight:bold; color:purple">Urządzenia medyczne</h3>
+                    </div>
+                    <div>
+                        <br />
+                    </div>
+                    <div class="col-12 row">
+                        <input class="form-control col-12" placeholder="Login"  @bind-value="_userForAuthentication.Username" />
+                    </div>
+                    <br />
+                    <div class="col-12 row">
+                        <input type="password" class="form-control col-12" placeholder="Hasło" @bind-value="_userForAuthentication.Password" />
+                    </div>
+                    <br />
+                    <div class="col-12 row">
+                        <span class="col-12"></span>
+                        <input type="submit" class="form-control col-6 btn btn-primary" value="Zaloguj" />
+                    </div>
+                    <br />
+                    <div class="col-12 row" style="text-align:left; font-weight:bold">
+                        <span class="col-12">@Error</span>
+                    </div>
+                </EditForm>
+
+            </div>
+        </div>
+        <div class="col-12 row">
+            <p>&nbsp;</p>
+        </div>
+    </div>
+</center>
+
+
+@code {
+    private LoginDto _userForAuthentication = new LoginDto();
+    public bool ShowAuthError { get; set; }
+    public string Error { get; set; }
+    public async Task ExecuteLogin()
+    {
+        _userForAuthentication.Username = "Test10";
+        _userForAuthentication.Password = "testowe1";
+        ShowAuthError = false;
+        var result = await AuthenticationService.Login(_userForAuthentication);
+        if (!result.IsAuthSuccessful)
+        {
+            Error = result.ErrorMessage;
+            ShowAuthError = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/deviceedit");
+        }
+    }
+}

@@ -30,8 +30,8 @@ namespace ProjektKarolewski.Controllers
         {
 
             _deviceService.Update(id, dto);
-      
-            return Ok();
+
+            return Created($"/api/device/{id}", JObject.Parse("{'status': 200}"));
         }
 
         [HttpDelete("{id}")]

@@ -16,7 +16,9 @@ namespace ProjektKarolewski.Models
         public string InventoryNumber { get; set; }
         public string SerialNumber { get; set; }
         public string Comments { get; set; }
+        public int WardId { get; set; }
         public string Ward { get; set; }
+        public int ProducerId { get; set; }
         public string Producer { get; set; }
     }
 }
