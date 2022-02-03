@@ -50,7 +50,10 @@ namespace ProjektKarolewski.Services
         {
             var device = GetDeviceById(deviceId);
 
-            var inspection = _context.Inspections.FirstOrDefault(i => i.Id == inspectionId);
+            var inspection = _context.Inspections
+                .Include(i => i.InspectionType)
+                .Include(i => i.Service)
+                .FirstOrDefault(i => i.Id == inspectionId);
             if (inspection is null || inspection.DeviceId != deviceId)
             {
                 throw new NotFoundException("Inspection not found");
@@ -64,7 +67,12 @@ namespace ProjektKarolewski.Services
         {
             var device = GetDeviceById(deviceId);
 
-            var inspectionDtos = _mapper.Map<List<InspectionDto>>(device.Inspections);
+            var inspections = _context.Inspections
+                .Include(i => i.InspectionType)
+                .Include(i => i.Service)
+                .Where(i => i.DeviceId == deviceId);
+
+            var inspectionDtos = _mapper.Map<List<InspectionDto>>(inspections);
 
             return inspectionDtos;
         }

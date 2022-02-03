@@ -12,5 +12,11 @@ namespace ProjektKarolewski.Models
         public int InspectionFrequency { get; set; }
         public bool Warranty { get; set; }
         public byte[] Scan { get; set; }
+        public int InspectionTypeId { get; set; }
+        public string InspectionType { get; set; }
+        public int ServiceId { get; set; }
+        public string Service { get; set; }
+
+
     }
 }
