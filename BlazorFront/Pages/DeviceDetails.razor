@@ -1,0 +1,10 @@
+﻿@page "/devicedetails/{Id}"
+
+<h3>DeviceDetails</h3>
+
+<p>Urządzenie @Id</p>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+}

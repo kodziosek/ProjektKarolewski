@@ -9,7 +9,7 @@ namespace ProjektKarolewski.Entities
     public class ProjektDbContext : DbContext
     {
         private string _connectionString =
-            "Server=DESKTOP-O14MHG2; Database=ProjektDb;Trusted_Connection=True";
+            "Server=LAPTOP-9GMMPIUH; Database=ProjektDb;Trusted_Connection=True";
         public DbSet<Device> Devices { get; set; }
         public DbSet<Ward> Wards { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
