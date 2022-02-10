@@ -1,10 +1,60 @@
-﻿@page "/devicedetails/{Id}"
+﻿@page "/devicedetails/{DeviceId}"
+@using BlazorFront.Models
+@using ProjektKarolewski.Models
+@using Syncfusion.Blazor.Grids
+@inject NavigationManager UriHelper
 
-<h3>DeviceDetails</h3>
 
-<p>Urządzenie @Id</p>
 
-@code {
+@{
+    var SearchTool = new List<string>() { "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
+
+<p>Przeglądy</p>
+<SfGrid ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Inspections" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents TValue="InspectionDto"></GridEvents>
+    <GridColumns>
+        <GridColumn Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.InspectionFrequency)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Warranty)" HeaderText="Gwarancja"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.InspectionType)" HeaderText="Rodzaj przeglądu"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Service)" HeaderText="Serwisant" Width="200"></GridColumn>
+    </GridColumns>
+</SfGrid>
+<style>
+    .e-grid .e-headercell {
+        background-color: gray;
+    }
+
+    .e-headercell {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+@code{
     [Parameter]
-    public string Id { get; set; }
+    public string DeviceId { get; set; }
+
+
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+    public List<InspectionDto> Inspections { get; set; }
+
+    [Inject]
+    public IInspectionService InspectionService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        int DevId = Int32.Parse(DeviceId);
+        Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
+
+    }
 }
