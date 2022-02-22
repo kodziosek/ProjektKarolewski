@@ -2,6 +2,7 @@
 @using BlazorFront.Models
 @using ProjektKarolewski.Models
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
 @inject NavigationManager UriHelper
 
 
@@ -14,6 +15,7 @@
 <p>Przeglądy</p>
 <SfGrid ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Inspections" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents TValue="InspectionDto"></GridEvents>
@@ -22,7 +24,13 @@
         <GridColumn Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.InspectionFrequency)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Warranty)" HeaderText="Gwarancja"></GridColumn>
-        <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan">
+            <EditTemplate>
+                <SfUploader AutoUpload="false">
+                    <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+                </SfUploader>
+            </EditTemplate>
+        </GridColumn>
         <GridColumn Field="@nameof(InspectionDto.InspectionType)" HeaderText="Rodzaj przeglądu"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Service)" HeaderText="Serwisant" Width="200"></GridColumn>
     </GridColumns>
@@ -43,6 +51,7 @@
     [Parameter]
     public string DeviceId { get; set; }
 
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px"};
 
     public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
 
@@ -56,5 +65,9 @@
         int DevId = Int32.Parse(DeviceId);
         Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
 
+    }
+    private void OnChange(UploadChangeEventArgs args)
+    {
+        throw new NotImplementedException();
     }
 }

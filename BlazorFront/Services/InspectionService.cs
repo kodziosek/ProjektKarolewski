@@ -32,11 +32,11 @@ namespace BlazorFront.Services
         {
             await httpClient.DeleteAsync($"api/device/{deviceId}/inspection/{inspectionId}");
         }
-        //public async Task<InspectionDto> UpdateInspection(InspectionDto inspection)
-        //{
-        //    var response = await httpClient.PutAsJsonAsync<InspectionDto>($"api/device/{deviceId}/inspection/", inspection);
-        //    return await response.Content.ReadFromJsonAsync<InspectionDto>();
-        //}
+        public async Task<InspectionDto> UpdateInspection(InspectionDto inspection, int deviceId, int inspectionId)
+        {
+            var response = await httpClient.PutAsJsonAsync<InspectionDto>($"api/device/{deviceId}/inspection/{inspectionId}", inspection);
+            return await response.Content.ReadFromJsonAsync<InspectionDto>();
+        }
     }
 
 }

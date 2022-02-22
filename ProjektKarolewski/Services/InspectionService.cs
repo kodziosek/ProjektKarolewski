@@ -19,6 +19,7 @@ namespace ProjektKarolewski.Services
         List<InspectionDto> GetAll(int deviceId);
         void RemoveAll(int deviceId);
         void RemoveById(int deviceId, int inspectionId);
+        void Update(int deviceId, InspectionDto dto, int inspectionId);
     }
     public class InspectionService : IInspectionService
     {
@@ -43,6 +44,30 @@ namespace ProjektKarolewski.Services
             _context.SaveChanges();
 
             return inspection.Id;
+
+        }
+
+        public void Update(int deviceId, InspectionDto dto, int inspectionId)
+        {
+            var device = GetDeviceById(deviceId);
+            var inspection = _context.Inspections
+               .Include(i => i.InspectionType)
+               .Include(i => i.Service)
+               .FirstOrDefault(i => i.Id == inspectionId);
+            if (inspection is null || inspection.DeviceId != deviceId)
+            {
+                throw new NotFoundException("Inspection not found");
+            }
+
+            inspection.InspectionDate = dto.InspectionDate;
+            inspection.InspectionFrequency = dto.InspectionFrequency;
+            inspection.InspectionTypeId = dto.InspectionTypeId;
+            inspection.Scan = dto.Scan;
+            inspection.ServiceId = dto.ServiceId;
+            inspection.Warranty = dto.Warranty;
+
+
+            _context.SaveChanges();
 
         }
 

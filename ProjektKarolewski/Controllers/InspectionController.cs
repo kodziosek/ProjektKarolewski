@@ -35,6 +35,14 @@ namespace ProjektKarolewski.Controllers
             return NoContent();
         }
 
+        [HttpPut("{inspectionId}")]
+        public ActionResult<InspectionDto> Update([FromRoute] int deviceId, [FromBody] InspectionDto dto, [FromRoute] int inspectionId)
+        {
+            _inspectionService.Update(deviceId, dto, inspectionId);
+
+            return Created($"api/device/{deviceId}/inspection/{inspectionId}", null);
+        }
+
         [HttpPost]
         public ActionResult Post([FromRoute] int deviceId,[FromBody] CreateInspectionDto dto)
         {
