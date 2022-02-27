@@ -18,7 +18,7 @@
     <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
-    <GridEvents TValue="InspectionDto"></GridEvents>
+    <GridEvents OnActionBegin="ActionBeginHandler" TValue="InspectionDto"></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
@@ -27,12 +27,12 @@
         <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan">
             <EditTemplate>
                 <SfUploader AutoUpload="false">
-                    <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+                    <UploaderAsyncSettings SaveUrl="api/upload/Save" RemoveUrl="api/SampleData/Remove"></UploaderAsyncSettings>
                 </SfUploader>
             </EditTemplate>
         </GridColumn>
-        <GridColumn Field="@nameof(InspectionDto.InspectionType)" HeaderText="Rodzaj przeglądu"></GridColumn>
-        <GridColumn Field="@nameof(InspectionDto.Service)" HeaderText="Serwisant" Width="200"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.InspectionTypeId)" HeaderText="Rodzaj przeglądu"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.ServiceId)" HeaderText="Serwisant" Width="200"></GridColumn>
     </GridColumns>
 </SfGrid>
 <style>
@@ -51,7 +51,7 @@
     [Parameter]
     public string DeviceId { get; set; }
 
-    private DialogSettings DialogParams = new DialogSettings { Width = "550px"};
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px" };
 
     public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
 
@@ -66,8 +66,24 @@
         Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
 
     }
-    private void OnChange(UploadChangeEventArgs args)
+    public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)
     {
-        throw new NotImplementedException();
+        int DevId = Int32.Parse(DeviceId);
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if(Args.Action == "Add")
+            {
+                await InspectionService.AddInspection(Args.Data);
+            }
+            else
+            {
+                await InspectionService.UpdateInspection(Args.Data, DevId, Args.Data.Id);
+            }
+        }
+        if(Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await InspectionService.DeleteInspection(Args.Data.Id, DevId);
+        }
     }
 }

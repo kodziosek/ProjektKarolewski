@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using ProjektKarolewski.Models;
 using ProjektKarolewski.Services;
 
@@ -40,7 +41,7 @@ namespace ProjektKarolewski.Controllers
         {
             _inspectionService.Update(deviceId, dto, inspectionId);
 
-            return Created($"api/device/{deviceId}/inspection/{inspectionId}", null);
+            return Created($"api/device/{deviceId}/inspection/{inspectionId}", JObject.Parse("{'status': 200}"));
         }
 
         [HttpPost]

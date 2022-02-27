@@ -22,7 +22,7 @@ namespace BlazorFront.Services
         {
             return await httpClient.GetFromJsonAsync<IEnumerable<InspectionDto>>($"api/device/{deviceId}/inspection/");
         }
-        public async Task<InspectionDto> AddDevice(InspectionDto inspection)
+        public async Task<InspectionDto> AddInspection(InspectionDto inspection)
         {
 
             var response = await httpClient.PostAsJsonAsync<InspectionDto>("api/device", inspection);

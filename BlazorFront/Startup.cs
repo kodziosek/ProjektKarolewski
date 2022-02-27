@@ -20,6 +20,7 @@ using System.Net.Http;
 using Blazored.LocalStorage;
 using BlazorFront.AuthProviders;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorFront
 {
@@ -82,6 +83,8 @@ namespace BlazorFront
             {
                 client.BaseAddress = new Uri("https://localhost:5001/");
             });
+            services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
