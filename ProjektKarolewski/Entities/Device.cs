@@ -23,7 +23,7 @@ namespace ProjektKarolewski.Entities
         public virtual Ward Ward { get; set; }
         public int ProducerId { get; set; }
         public virtual Producer Producer { get; set; }
-        public virtual List<Fault> Faults { get; set; }
+        public virtual List<Ticket> Tickets { get; set; }
         public virtual List<Inspection> Inspections { get; set; }
         
     }

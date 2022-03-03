@@ -22,7 +22,7 @@ namespace BlazorFront.Services
             this.hostingEnv = env;
         }
         [HttpPost("[action]")]
-        public void Save(IList<IFormFile> chunkFile, IList<IFormFile> UploadFiles)
+        public void Save(IList<IFormFile> UploadFiles)
         {
             long size = 0;
             try

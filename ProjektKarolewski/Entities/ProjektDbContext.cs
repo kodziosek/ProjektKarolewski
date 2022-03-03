@@ -90,7 +90,7 @@ namespace ProjektKarolewski.Entities
             modelBuilder.Entity<Ticket>()
                 .Property(f => f.TicketDate)
                 .IsRequired();
-
+            
 
             modelBuilder.Entity<Reply>()
                 .Property(r => r.ReplyDate)

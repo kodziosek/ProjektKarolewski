@@ -13,7 +13,7 @@ namespace ProjektKarolewski.Models
         [Required]
         public int InspectionFrequency { get; set; }
         public bool Warranty { get; set; }
-        public byte[] Scan { get; set; }
+        public string Scan { get; set; }
 
         public int InspectionTypeId { get; set; }
         public int DeviceId { get; set; }

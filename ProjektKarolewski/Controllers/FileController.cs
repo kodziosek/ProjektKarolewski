@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 namespace ProjektKarolewski.Controllers
 {
     [Route("file")]
-    [Authorize]
-
+    
     public class FileController : ControllerBase
     {
         [HttpGet]
@@ -38,7 +37,7 @@ namespace ProjektKarolewski.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload([FromForm] IFormFile file)
+        public ActionResult Upload([FromForm] IFormFile file
         {
             if(file != null && file.Length > 0)
             {

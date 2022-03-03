@@ -17,7 +17,7 @@ namespace ProjektKarolewski.Services
     {
         private readonly ProjektDbContext _context;
         private readonly IMapper _mapper;
-
+        
         public ProducerService(ProjektDbContext context, IMapper mapper)
         {
             _context = context;

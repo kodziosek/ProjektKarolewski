@@ -11,7 +11,7 @@ namespace ProjektKarolewski.Entities
         public DateTime InspectionDate { get; set; }
         public int InspectionFrequency { get; set; }
         public bool Warranty { get; set; }
-        public byte[] Scan { get; set; }
+        public string Scan { get; set; }
 
         public int DeviceId { get; set; }
         public virtual Device Device { get; set; }

@@ -26,8 +26,8 @@
         <GridColumn Field="@nameof(InspectionDto.Warranty)" HeaderText="Gwarancja"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan">
             <EditTemplate>
-                <SfUploader AutoUpload="false">
-                    <UploaderAsyncSettings SaveUrl="api/upload/Save" RemoveUrl="api/SampleData/Remove"></UploaderAsyncSettings>
+                <SfUploader ID="file" AutoUpload="false" AllowMultiple=false>
+                    <UploaderAsyncSettings SaveUrl="file" RemoveUrl="api/SampleData/Remove"></UploaderAsyncSettings>
                 </SfUploader>
             </EditTemplate>
         </GridColumn>

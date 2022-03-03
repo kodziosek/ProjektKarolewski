@@ -101,16 +101,16 @@ namespace ProjektKarolewski
                     {
                         Name = "Aloka"
                     },
-                    Faults = new List<Fault>()
+                    Tickets = new List<Ticket>()
                     {
-                        new Fault()
+                        new Ticket()
                         {
-                            FaultDate = new DateTime(2020, 05, 07),
-                            FaultDescription = "Uszkodzenie głowicy USG płaskiej",
-                            Repair = new Repair()
+                            TicketDate = new DateTime(2020, 05, 07),
+                            TicketDescription = "Uszkodzenie głowicy USG płaskiej",
+                            Reply = new Reply()
                             {
-                                RepairDate = new DateTime(2020,05,09),
-                                RepairDescription = "Wymieniona głowica na nową"
+                                ReplyDate = new DateTime(2020,05,09),
+                                ReplyDescription = "Wymieniona głowica na nową"
                             }
                         }
                     }
