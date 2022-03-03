@@ -9,7 +9,7 @@ namespace ProjektKarolewski.Entities
     public class ProjektDbContext : DbContext
     {
         private string _connectionString =
-            "Server=DESKTOP-O14MHG2; Database=ProjektDb;Trusted_Connection=True";
+            "Server=LAPTOP-9GMMPIUH; Database=ProjektDb;Trusted_Connection=True";
         public DbSet<Device> Devices { get; set; }
         public DbSet<Ward> Wards { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
@@ -17,8 +17,9 @@ namespace ProjektKarolewski.Entities
         public DbSet<Producer> Producers { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Contract> Contracts { get; set; }
-        public DbSet<Fault> Faults { get; set; }
-        public DbSet<Repair> Repairs { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Reply> Replies { get; set; }
+        public DbSet<TicketStatus> TicketStatuses { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         
@@ -86,18 +87,15 @@ namespace ProjektKarolewski.Entities
                 .IsRequired()
                 .HasMaxLength(60);
 
-            modelBuilder.Entity<Fault>()
-                .Property(f => f.FaultDate)
+            modelBuilder.Entity<Ticket>()
+                .Property(f => f.TicketDate)
                 .IsRequired();
 
-            modelBuilder.Entity<Repair>()
-                .Property(r => r.RepairDate)
+
+            modelBuilder.Entity<Reply>()
+                .Property(r => r.ReplyDate)
                 .IsRequired()
                 .HasMaxLength(30);
-
-            modelBuilder.Entity<Repair>()
-                .Property(r => r.RepairDescription)
-                .IsRequired();
 
             modelBuilder.Entity<User>()
                 .Property(r => r.Username)
