@@ -1,6 +1,7 @@
 ﻿@page "/devicedetails/{DeviceId}"
 @using BlazorFront.Models
 @using ProjektKarolewski.Models
+@using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Inputs
 @inject NavigationManager UriHelper
@@ -8,31 +9,48 @@
 
 
 @{
-    var SearchTool = new List<string>() { "Search" };
+    var SearchTool = new List<string>() { "Add", "Cancel", "Search" };
     System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
 }
 
 <p>Przeglądy</p>
-<SfGrid ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Inspections" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+<SfGrid @ref="inspectionEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Inspections" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" TValue="InspectionDto"></GridEvents>
     <GridColumns>
-        <GridColumn Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn AllowAdding="false" Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.InspectionFrequency)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Warranty)" HeaderText="Gwarancja"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan">
             <EditTemplate>
+                <label>Skan dokumentu</label>
                 <SfUploader ID="file" AutoUpload="false" AllowMultiple=false>
                     <UploaderAsyncSettings SaveUrl="file" RemoveUrl="api/SampleData/Remove"></UploaderAsyncSettings>
                 </SfUploader>
             </EditTemplate>
         </GridColumn>
-        <GridColumn Field="@nameof(InspectionDto.InspectionTypeId)" HeaderText="Rodzaj przeglądu"></GridColumn>
-        <GridColumn Field="@nameof(InspectionDto.ServiceId)" HeaderText="Serwisant" Width="200"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.InspectionType)" HeaderText="Rodzaj przeglądu">
+            <EditTemplate>
+                <label>Rodzaj przeglądu</label>
+                <SfDropDownList DataSource="@InspectionTypes" TItem="InspectionTypeDto" TValue="int" @bind-Value="@((context as InspectionDto).InspectionTypeId)">
+                    <DropDownListEvents TItem="InspectionTypeDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Service)" HeaderText="Serwisant" Width="200">
+            <EditTemplate>
+                <label>Serwisant</label>
+                <SfDropDownList DataSource="@Services" TItem="ServiceDto" TValue="int" @bind-Value="@((context as InspectionDto).ServiceId)">
+                    <DropDownListEvents TItem="ServiceDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="ServiceName" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
     </GridColumns>
 </SfGrid>
 <style>
@@ -56,32 +74,72 @@
     public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
 
     public List<InspectionDto> Inspections { get; set; }
+    public List<InspectionTypeDto> InspectionTypes { get; set; }
+    public List<ServiceDto> Services { get; set; }
+    InspectionTypeDto DropDownSelectedInspectionType = new InspectionTypeDto();
+    ServiceDto DropDownSelectedService = new ServiceDto();
+
+    public SfGrid<InspectionDto> inspectionEditGrid { get; set; }
 
     [Inject]
     public IInspectionService InspectionService { get; set; }
+
+    [Inject]
+    public IInspectionTypeService InspectionTypeService { get; set; }
+
+    [Inject]
+    public IServiceService ServiceService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         int DevId = Int32.Parse(DeviceId);
         Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
+        InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
+        Services = (await ServiceService.GetServices()).ToList();
 
     }
+
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<InspectionTypeDto> args)
+    {
+        DropDownSelectedInspectionType.Id = args.ItemData.Id;
+    }
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<ServiceDto> args)
+    {
+        DropDownSelectedService.Id = args.ItemData.Id;
+    }
+
     public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)
     {
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            Args.Data = Args.PreviousData;
+        }
+
         int DevId = Int32.Parse(DeviceId);
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
-            if(Args.Action == "Add")
+            if (Args.Action == "Add")
             {
-                await InspectionService.AddInspection(Args.Data);
+                Args.Data.InspectionTypeId = DropDownSelectedInspectionType.Id;
+                Args.Data.ServiceId = DropDownSelectedService.Id;
+                await InspectionService.AddInspection(Args.Data, DevId);
+                InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
+                Services = (await ServiceService.GetServices()).ToList();
+                inspectionEditGrid.Refresh();
             }
             else
             {
+                Args.Data.InspectionTypeId = DropDownSelectedInspectionType.Id;
+                Args.Data.ServiceId = DropDownSelectedService.Id;
                 await InspectionService.UpdateInspection(Args.Data, DevId, Args.Data.Id);
+                InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
+                Services = (await ServiceService.GetServices()).ToList();
+                inspectionEditGrid.Refresh();
             }
         }
-        if(Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await InspectionService.DeleteInspection(Args.Data.Id, DevId);
         }

@@ -37,7 +37,7 @@ namespace ProjektKarolewski.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload([FromForm] IFormFile file
+        public ActionResult Upload([FromForm] IFormFile file)
         {
             if(file != null && file.Length > 0)
             {

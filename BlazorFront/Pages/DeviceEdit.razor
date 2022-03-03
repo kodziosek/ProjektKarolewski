@@ -17,7 +17,7 @@
 <SfGrid @ref="deviceGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Device" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
-    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true">
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true"  Dialog="DialogParams">
         
         <HeaderTemplate>
             <span>@GetHeaderText(context as DeviceData)</span>
@@ -41,6 +41,7 @@
         <GridColumn AllowFiltering="false" Field="@nameof(DeviceData.Comments)" HeaderText="Komentarz"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.Ward)" HeaderText="Oddział">
             <EditTemplate>
+                <label>Oddział</label>
                 <SfDropDownList DataSource="@Wards" TItem="WardDto" TValue="int" @bind-Value="@((context as DeviceData).WardId)">
                     <DropDownListEvents TItem="WardDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
                     <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
@@ -49,6 +50,7 @@
         </GridColumn>
         <GridColumn Field="@nameof(DeviceData.Producer)" HeaderText="Producent">
             <EditTemplate>
+                <label>Producent</label>
                 <SfDropDownList DataSource="@Producers" TItem="ProducerDto" TValue="int" @bind-Value="@((context as DeviceData).ProducerId)">
                     <DropDownListEvents TItem="ProducerDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
                     <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
@@ -87,6 +89,8 @@
 @code{
 
     public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px" };
 
     public DeviceResults Datas { get; set; }
 
