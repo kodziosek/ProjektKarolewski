@@ -49,7 +49,7 @@ namespace ProjektKarolewski.Controllers
                     file.CopyTo(stream);
                 }
 
-                return Ok();
+                return Ok(fullPath);
             }
 
             return BadRequest();
