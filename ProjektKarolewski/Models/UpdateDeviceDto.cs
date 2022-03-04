@@ -8,23 +8,12 @@ namespace ProjektKarolewski.Models
 {
     public class UpdateDeviceDto
     {
-        [Required]
-        [MaxLength(30)]
+
         public string Name { get; set; }
-        [Required]
-        [MaxLength(30)]
         public string NameInPassport { get; set; }
-        [Required]
-        [MaxLength(10)]
         public string AcquisitionDate { get; set; }
-        [Required]
-        [MaxLength(10)]
         public string ProductionDate { get; set; }
-        [Required]
-        [MaxLength(10)]
         public string PassportNumber { get; set; }
-        [Required]
-        [MaxLength(20)]
         public string InventoryNumber { get; set; }
         public string SerialNumber { get; set; }
         public string Comments { get; set; }

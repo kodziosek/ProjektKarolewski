@@ -125,15 +125,15 @@
                 Args.Data.InspectionTypeId = DropDownSelectedInspectionType.Id;
                 Args.Data.ServiceId = DropDownSelectedService.Id;
                 await InspectionService.AddInspection(Args.Data, DevId);
+                Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
                 InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
                 Services = (await ServiceService.GetServices()).ToList();
                 inspectionEditGrid.Refresh();
             }
             else
             {
-                Args.Data.InspectionTypeId = DropDownSelectedInspectionType.Id;
-                Args.Data.ServiceId = DropDownSelectedService.Id;
                 await InspectionService.UpdateInspection(Args.Data, DevId, Args.Data.Id);
+                Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
                 InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
                 Services = (await ServiceService.GetServices()).ToList();
                 inspectionEditGrid.Refresh();
