@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="PrivateFiles\" />
+    <Folder Include="PrivateFiles\NewFolder\" />
     <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 

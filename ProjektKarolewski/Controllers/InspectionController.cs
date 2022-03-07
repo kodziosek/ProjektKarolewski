@@ -49,7 +49,7 @@ namespace ProjektKarolewski.Controllers
         {
             var newInspectionId = _inspectionService.Create(deviceId, dto);
 
-            return Created($"api/device/{deviceId}/inspection/{newInspectionId}", null);
+            return Created($"api/device/{deviceId}/inspection/{newInspectionId}", JObject.Parse("{'status': 200}"));
         }
 
         [HttpGet("{inspectionId}")]

@@ -28,9 +28,18 @@
         <GridColumn Field="@nameof(InspectionDto.InspectionFrequency)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Warranty)" HeaderText="Gwarancja"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan">
+            <Template>
+                @{
+                    var inspection = (context as InspectionDto);
+                    <div class="link">
+                        <a href="@($"/PrivateFiles/{inspection.Scan}")">Skan</a>
+                    </div>
+                }
+            </Template>
             <EditTemplate>
                 <label>Skan dokumentu</label>
-                <SfUploader ID="file" AutoUpload="false" AllowMultiple=false OnChange="@OnSuccess">
+                <SfUploader ID="file" AutoUpload="false" AllowMultiple="false">
+                    <UploaderEvents Success=@OnSuccess></UploaderEvents>
                     <UploaderAsyncSettings SaveUrl="file" RemoveUrl="api/SampleData/Remove"></UploaderAsyncSettings>
                 </SfUploader>
             </EditTemplate>
@@ -80,6 +89,7 @@
     public List<ServiceDto> Services { get; set; }
     InspectionTypeDto DropDownSelectedInspectionType = new InspectionTypeDto();
     ServiceDto DropDownSelectedService = new ServiceDto();
+    public string filename;
 
     public SfGrid<InspectionDto> inspectionEditGrid { get; set; }
 
@@ -110,10 +120,9 @@
         DropDownSelectedService.Id = args.ItemData.Id;
     }
 
-    public void OnSuccess(object args)
+    public void OnSuccess(SuccessEventArgs args)
     {
-        var file = args.ToString();
-        string filename = Path.GetFileName(file);
+        filename = args.File.Name.ToString();
     }
 
     public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)
@@ -132,6 +141,7 @@
             {
                 Args.Data.InspectionTypeId = DropDownSelectedInspectionType.Id;
                 Args.Data.ServiceId = DropDownSelectedService.Id;
+                Args.Data.Scan = filename;
                 await InspectionService.AddInspection(Args.Data, DevId);
                 Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
                 InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
@@ -140,6 +150,7 @@
             }
             else
             {
+                Args.Data.Scan = filename;
                 await InspectionService.UpdateInspection(Args.Data, DevId, Args.Data.Id);
                 Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
                 InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
