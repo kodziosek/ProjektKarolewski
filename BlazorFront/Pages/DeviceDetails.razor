@@ -4,6 +4,8 @@
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Inputs
+@using System;
+@using System.IO;
 @inject NavigationManager UriHelper
 
 
@@ -28,7 +30,7 @@
         <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan">
             <EditTemplate>
                 <label>Skan dokumentu</label>
-                <SfUploader ID="file" AutoUpload="false" AllowMultiple=false>
+                <SfUploader ID="file" AutoUpload="false" AllowMultiple=false OnChange="@OnSuccess">
                     <UploaderAsyncSettings SaveUrl="file" RemoveUrl="api/SampleData/Remove"></UploaderAsyncSettings>
                 </SfUploader>
             </EditTemplate>
@@ -106,6 +108,12 @@
     public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<ServiceDto> args)
     {
         DropDownSelectedService.Id = args.ItemData.Id;
+    }
+
+    public void OnSuccess(object args)
+    {
+        var file = args.ToString();
+        string filename = Path.GetFileName(file);
     }
 
     public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)

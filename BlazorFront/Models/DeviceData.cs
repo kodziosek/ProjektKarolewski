@@ -30,7 +30,7 @@ namespace BlazorFront.Models
         [MinLength(3, ErrorMessage = "Pole musi zawierać minimum 3 znaki")]
         public string ProductionDate { get; set; }
         [JsonProperty("PassportNumber")]
-       // [Required(ErrorMessage = "Pole nie może być puste")]
+      //  [Required(ErrorMessage = "Pole nie może być puste")]
         [MinLength(3, ErrorMessage = "Pole musi zawierać minimum 3 znaki")]
         public string PassportNumber { get; set; }
         [JsonProperty("InventoryNumber")]
