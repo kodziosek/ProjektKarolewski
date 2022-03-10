@@ -41,12 +41,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="PrivateFiles\NewFolder\" />
     <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\Images\logo.png" />
+    <None Include="wwwroot\PrivateFiles\Devices.txt" />
+    <None Include="wwwroot\PrivateFiles\Driver - dokumentacja.pdf" />
   </ItemGroup>
 
 </Project>
