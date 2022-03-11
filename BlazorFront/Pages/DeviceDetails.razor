@@ -31,10 +31,12 @@
             <Template>
                 @{
                     var inspection = (context as InspectionDto);
-                    <div class="link">
-                        <a href="@($"/PrivateFiles/{inspection.Scan}")">Skan</a>
-                    </div>
+                    string name = inspection.Scan;
                 }
+                    <div class="link">
+                        <a href="@($"/PrivateFiles/{name}")">@name</a>
+                    </div>
+                
             </Template>
             <EditTemplate>
                 <label>Skan dokumentu</label>

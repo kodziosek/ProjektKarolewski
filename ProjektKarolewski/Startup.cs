@@ -62,6 +62,7 @@ namespace ProjektKarolewski
             services.AddAutoMapper(this.GetType().Assembly);
             services.AddScoped<IDeviceService, DeviceService>();
             services.AddScoped<IInspectionService, InspectionService>();
+            services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IProducerService, ProducerService>();
             services.AddScoped<IServiceService, ServiceService>();

@@ -107,10 +107,13 @@ namespace ProjektKarolewski
                         {
                             TicketDate = new DateTime(2020, 05, 07),
                             TicketDescription = "Uszkodzenie głowicy USG płaskiej",
-                            Reply = new Reply()
+                            Replies = new List<Reply>()
                             {
-                                ReplyDate = new DateTime(2020,05,09),
-                                ReplyDescription = "Wymieniona głowica na nową"
+                                new Reply()
+                                {
+                                    ReplyDate = new DateTime(2020,05,09),
+                                    ReplyDescription = "Wymieniona głowica na nową"
+                                }
                             }
                         }
                     }

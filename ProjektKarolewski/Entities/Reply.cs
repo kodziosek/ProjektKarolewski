@@ -12,6 +12,7 @@ namespace ProjektKarolewski.Entities
         public string ReplyDescription { get; set; }
         public string ReplyProtocol { get; set; }
 
+        public int TicketId { get; set; }
         public virtual Ticket Ticket { get; set; }
     }
 }

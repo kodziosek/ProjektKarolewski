@@ -14,8 +14,7 @@ namespace ProjektKarolewski.Entities
 
         public int DeviceId { get; set; }
         public virtual Device Device { get; set; }
-        public int ReplyId { get; set; }
-        public virtual Reply Reply { get; set; }
+        public virtual List<Reply> Replies { get; set; }
         public int TicketStatusId { get; set; }
         public virtual TicketStatus TicketStatus { get; set; }
     }

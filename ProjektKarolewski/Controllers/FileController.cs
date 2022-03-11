@@ -43,7 +43,7 @@ namespace ProjektKarolewski.Controllers
             {
                 var rootPath = Directory.GetCurrentDirectory();
                 var fileName = file.FileName;
-                var fullPath = $"{rootPath}/PrivateFiles/{fileName}";
+                var fullPath = $"{rootPath}/wwwroot/PrivateFiles/{fileName}";
                 using(var stream = new FileStream(fullPath, FileMode.Create))
                 {
                     file.CopyTo(stream);
