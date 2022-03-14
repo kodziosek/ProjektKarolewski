@@ -63,6 +63,8 @@ namespace ProjektKarolewski
             services.AddScoped<IDeviceService, DeviceService>();
             services.AddScoped<IInspectionService, InspectionService>();
             services.AddScoped<ITicketService, TicketService>();
+            services.AddScoped<ITicketStatusService, TicketStatusService>();
+            services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IProducerService, ProducerService>();
             services.AddScoped<IServiceService, ServiceService>();

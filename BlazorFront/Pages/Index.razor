@@ -2,13 +2,13 @@
 @using BlazorFront.Models
 @using Syncfusion.Blazor.Grids
 @inject NavigationManager UriHelper
+@attribute [Authorize(Roles = "Administrator")]
 
 
-
-    @{
-        var SearchTool = new List<string>() { "Search" };
-        System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
-    }
+@{
+    var SearchTool = new List<string>() { "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
 
 
 <SfGrid ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Device" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">

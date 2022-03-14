@@ -113,7 +113,8 @@ namespace ProjektKarolewski.Services
         {
             var device = GetDeviceById(deviceId);
 
-            var inspection = _context.Inspections.FirstOrDefault(i => i.Id == inspectionId);
+            var inspection = _context.Inspections
+                .FirstOrDefault(i => i.Id == inspectionId);
             if (inspection is null || inspection.DeviceId != deviceId)
             {
                 throw new NotFoundException("Inspection not found");
