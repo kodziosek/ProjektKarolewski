@@ -1,8 +1,9 @@
+@using BlazorFront.Pages
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
             <NotAuthorized>
-                <p>B³¹d logowania</p>
+                <LoginRedirect />
             </NotAuthorized>
         </AuthorizeRouteView>
     </Found>

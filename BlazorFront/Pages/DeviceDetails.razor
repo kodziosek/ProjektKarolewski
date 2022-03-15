@@ -66,6 +66,30 @@
         </GridColumn>
     </GridColumns>
 </SfGrid>
+<p>Zgłoszenia</p>
+<SfGrid @ref="ticketEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Tickets" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
+    <GridColumns>
+        <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.TicketDescription)" HeaderText="Opis zgłoszenia" Width="200"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.Notifier)" HeaderText="Zgłaszający"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Urządzenie"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.TicketStatus)" HeaderText="Status">
+            <EditTemplate>
+                <label>Rodzaj przeglądu</label>
+                <SfDropDownList DataSource="@TicketStatuses" TItem="TicketStatusDto" TValue="int" @bind-Value="@((context as TicketDto).TicketStatusId)">
+                    <DropDownListEvents TItem="TicketStatusDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="StatusName" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
 <style>
     .e-grid .e-headercell {
         background-color: gray;
@@ -104,12 +128,26 @@
     [Inject]
     public IServiceService ServiceService { get; set; }
 
+    public List<TicketDto> Tickets { get; set; }
+    public List<TicketStatusDto> TicketStatuses { get; set; }
+    TicketStatusDto DropDownSelectedTicketStatus = new TicketStatusDto();
+
+    public SfGrid<TicketDto> ticketEditGrid { get; set; }
+
+    [Inject]
+    public ITicketService TicketService { get; set; }
+
+    [Inject]
+    public ITicketStatusService TicketStatusService { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         int DevId = Int32.Parse(DeviceId);
         Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
         InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
         Services = (await ServiceService.GetServices()).ToList();
+        Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
+        TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
 
     }
 
@@ -120,6 +158,10 @@
     public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<ServiceDto> args)
     {
         DropDownSelectedService.Id = args.ItemData.Id;
+    }
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<TicketStatusDto> args)
+    {
+        DropDownSelectedTicketStatus.Id = args.ItemData.Id;
     }
 
     public void OnSuccess(SuccessEventArgs args)
@@ -163,6 +205,39 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await InspectionService.DeleteInspection(Args.Data.Id, DevId);
+        }
+    }
+    public async void ActionBeginHandler1(ActionEventArgs<TicketDto> Args)
+    {
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            Args.Data = Args.PreviousData;
+        }
+
+        int DevId = Int32.Parse(DeviceId);
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.TicketStatusId = DropDownSelectedTicketStatus.Id;
+                await TicketService.AddTicket(Args.Data, DevId);
+                Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
+                TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+                ticketEditGrid.Refresh();
+            }
+            else
+            {
+                await TicketService.UpdateTicket(Args.Data, DevId, Args.Data.Id);
+                Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
+                TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+                ticketEditGrid.Refresh();
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await TicketService.DeleteTicket(Args.Data.Id, DevId);
         }
     }
 }
