@@ -15,6 +15,8 @@
     System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
 }
 
+<h1>Urządzenie: @deviceName</h1>
+
 <p>Przeglądy</p>
 <SfGrid @ref="inspectionEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Inspections" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
@@ -24,7 +26,7 @@
     <GridEvents OnActionBegin="ActionBeginHandler" TValue="InspectionDto"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
-        <GridColumn Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
+        <GridColumn Format="d" Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.InspectionFrequency)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Warranty)" HeaderText="Gwarancja"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan">
@@ -75,13 +77,12 @@
     <GridEvents OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
-        <GridColumn Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
+        <GridColumn Format="d" Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.TicketDescription)" HeaderText="Opis zgłoszenia" Width="200"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.Notifier)" HeaderText="Zgłaszający"></GridColumn>
-        <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Urządzenie"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.TicketStatus)" HeaderText="Status">
             <EditTemplate>
-                <label>Rodzaj przeglądu</label>
+                <label>Status zgłoszenia</label>
                 <SfDropDownList DataSource="@TicketStatuses" TItem="TicketStatusDto" TValue="int" @bind-Value="@((context as TicketDto).TicketStatusId)">
                     <DropDownListEvents TItem="TicketStatusDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
                     <DropDownListFieldSettings Text="StatusName" Value="Id"></DropDownListFieldSettings>
@@ -113,6 +114,7 @@
     public List<InspectionDto> Inspections { get; set; }
     public List<InspectionTypeDto> InspectionTypes { get; set; }
     public List<ServiceDto> Services { get; set; }
+    public string deviceName { get; set; }
     InspectionTypeDto DropDownSelectedInspectionType = new InspectionTypeDto();
     ServiceDto DropDownSelectedService = new ServiceDto();
     public string filename;
@@ -140,6 +142,9 @@
     [Inject]
     public ITicketStatusService TicketStatusService { get; set; }
 
+    [Inject]
+    public IDeviceService DeviceService { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         int DevId = Int32.Parse(DeviceId);
@@ -148,6 +153,8 @@
         Services = (await ServiceService.GetServices()).ToList();
         Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
         TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+        var deviceDto = (await DeviceService.GetDeviceById(DevId));
+        deviceName = deviceDto.Name;
 
     }
 
@@ -171,6 +178,10 @@
 
     public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)
     {
+        if(Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
+        {
+            Args.Data.InspectionDate = DateTime.Now;
+        }
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
         {
@@ -209,6 +220,12 @@
     }
     public async void ActionBeginHandler1(ActionEventArgs<TicketDto> Args)
     {
+
+        if(Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
+        {
+            Args.Data.TicketDate = DateTime.Now;
+            Args.Data.TicketStatusId = 1;
+        }
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
         {

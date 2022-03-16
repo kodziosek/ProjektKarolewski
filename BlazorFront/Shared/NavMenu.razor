@@ -1,37 +1,37 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">BlazorFront</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿@using Syncfusion.Blazor.Navigations
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
-    </ul>
-</div>
-
+ <div class="dock">
+                    <ul>
+                        <li class="sidebar-item" id="toggle" @onclick="@Toggle">
+                            <span class="e-icons expand"></span>
+                            <span class="e-text" title="menu">Menu</span>
+                        </li>
+                        <li class="sidebar-item">
+                             <NavLink class="nlink" rel='nofollow' href="deviceedit"> 
+                                <span class="e-icons home"></span>
+                                <span class="e-text" title="deviceedit">Zarządzanie</span>
+                            </NavLink>
+                        </li>
+                        <li class="sidebar-item">
+                            <span class="e-icons profile"></span>
+                            <span class="e-text" title="profile">Profile</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <span class="e-icons info"></span>
+                            <span class="e-text" title="info">Info</span>
+                        </li>
+                    </ul>
+                </div>
 @code {
-    private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    [Parameter]
+    public SfSidebar SidebarInstance { get; set; }
 
-    private void ToggleNavMenu()
+    public void Toggle()
     {
-        collapseNavMenu = !collapseNavMenu;
+        SidebarInstance.Toggle();
     }
+
+
+
 }

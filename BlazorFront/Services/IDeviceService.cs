@@ -14,5 +14,6 @@ namespace BlazorFront.Services
         Task<DeviceData> AddDevice(DeviceData device);
         Task DeleteDevice(int deviceId);
         Task<DeviceData> UpdateDevice(DeviceData device);
+        Task<DeviceDto> GetDeviceById(int Id);
     }
 }

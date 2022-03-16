@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
 using BlazorFront.Models;
+using ProjektKarolewski.Models;
 
 namespace BlazorFront.Services
 {
@@ -27,7 +28,11 @@ namespace BlazorFront.Services
             DeviceResults devices = JsonConvert.DeserializeObject<DeviceResults>(json);
             return devices;
         }
-         public async Task<DeviceData> AddDevice(DeviceData device)
+        public async Task<DeviceDto> GetDeviceById(int Id)
+        {
+            return await httpClient.GetFromJsonAsync<DeviceDto>($"api/device/{Id}");
+        }
+        public async Task<DeviceData> AddDevice(DeviceData device)
         {
 
             var response = await httpClient.PostAsJsonAsync<DeviceData>("api/device", device);
