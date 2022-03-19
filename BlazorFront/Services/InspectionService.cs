@@ -17,6 +17,10 @@ namespace BlazorFront.Services
         {
             this.httpClient = httpClient;
         }
+        public async Task<IEnumerable<InspectionDto>> GetAllInspections()
+        {
+            return await httpClient.GetFromJsonAsync<IEnumerable<InspectionDto>>($"api/notifications/inspections");
+        }
 
         public async Task<IEnumerable<InspectionDto>> GetInspectionByDevice(int deviceId)
         {

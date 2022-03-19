@@ -8,6 +8,7 @@ namespace BlazorFront.Services
 {
     public interface ITicketService
     {
+        Task<IEnumerable<TicketDto>> GetAllTickets();
         Task<IEnumerable<TicketDto>> GetTicketByDevice(int deviceId);
         Task<IEnumerable<TicketDto>> GetTicketById(int deviceId, int ticketId);
         Task<TicketDto> AddTicket(TicketDto ticket, int deviceId);

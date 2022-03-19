@@ -8,6 +8,7 @@ namespace BlazorFront.Services
 {
     public interface IInspectionService
     {
+        Task<IEnumerable<InspectionDto>> GetAllInspections();
         Task<IEnumerable<InspectionDto>> GetInspectionByDevice(int deviceId);
         Task<IEnumerable<InspectionDto>> GetInspectionById(int deviceId, int inspectionId);
         Task<InspectionDto> AddInspection(InspectionDto inspection, int deviceId);

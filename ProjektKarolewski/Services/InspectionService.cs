@@ -17,6 +17,7 @@ namespace ProjektKarolewski.Services
         int Create(int deviceId, CreateInspectionDto dto);
         InspectionDto GetById(int deviceId, int inspectionId);
         List<InspectionDto> GetAll(int deviceId);
+        List<InspectionDto> GetAll();
         void RemoveAll(int deviceId);
         void RemoveById(int deviceId, int inspectionId);
         void Update(int deviceId, InspectionDto dto, int inspectionId);
@@ -86,6 +87,20 @@ namespace ProjektKarolewski.Services
 
             var inspectionDto = _mapper.Map<InspectionDto>(inspection);
             return inspectionDto;
+        }
+
+        public List<InspectionDto> GetAll()
+        {
+
+            var inspections = _context.Inspections
+                .Include(i => i.InspectionType)
+                .Include(i => i.Service)
+                .Include(i => i.Device)
+                .ToList();
+
+            var inspectionDtos = _mapper.Map<List<InspectionDto>>(inspections);
+
+            return inspectionDtos;
         }
 
         public List<InspectionDto> GetAll(int deviceId)

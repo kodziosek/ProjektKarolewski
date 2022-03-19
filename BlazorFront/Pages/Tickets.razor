@@ -1,0 +1,155 @@
+﻿@page "/tickets"
+@using BlazorFront.Models
+@using ProjektKarolewski.Models
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using System;
+@using System.IO;
+@inject NavigationManager UriHelper
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+
+
+
+@{
+    var SearchTool = new List<string>() { "Add", "Cancel", "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
+
+
+<p style="padding-top: 10px">Zgłoszenia</p>
+<SfGrid @ref="ticketEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@TicketsList" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
+    <GridColumns>
+        <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Nazwa urządzenia">
+            <EditTemplate>
+                <label>Urządzenie</label>
+                <SfDropDownList DataSource="@TicketStatuses" TItem="TicketStatusDto" TValue="int" @bind-Value="@((context as TicketDto).TicketStatusId)">
+                    <DropDownListEvents TItem="TicketStatusDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="StatusName" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+        <GridColumn Format="d" Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.TicketDescription)" HeaderText="Opis zgłoszenia" Width="200"></GridColumn>
+        <GridColumn AllowAdding="false" AllowEditing="false" Field="@nameof(TicketDto.Notifier)" HeaderText="Zgłaszający"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.TicketStatus)" HeaderText="Status">
+            <EditTemplate>
+                <label>Status zgłoszenia</label>
+                <SfDropDownList DataSource="@TicketStatuses" TItem="TicketStatusDto" TValue="int" @bind-Value="@((context as TicketDto).TicketStatusId)">
+                    <DropDownListEvents TItem="TicketStatusDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="StatusName" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+<style>
+    .e-grid .e-headercell {
+        background-color: gray;
+    }
+
+    .e-headercell {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+@code{
+
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px" };
+
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+
+    public string deviceName { get; set; }
+    public string Username;
+
+
+
+    public List<TicketDto> TicketsList { get; set; }
+    public List<TicketStatusDto> TicketStatuses { get; set; }
+    public List<DeviceDto> Devices { get; set; }
+
+    TicketStatusDto DropDownSelectedTicketStatus = new TicketStatusDto();
+    DeviceDto DropDownSelectedDevice = new DeviceDto();
+
+    public SfGrid<TicketDto> ticketEditGrid { get; set; }
+
+    [Inject]
+    public ITicketService TicketService { get; set; }
+
+    [Inject]
+    public ITicketStatusService TicketStatusService { get; set; }
+
+    [Inject]
+    public IDeviceService DeviceService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        Username = user.Identity.Name;
+        TicketsList = (await TicketService.GetAllTickets()).Where(i => i.Notifier == Username).ToList();
+        TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+
+    }
+
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<DeviceDto> args)
+    {
+        DropDownSelectedDevice.Id = args.ItemData.Id;
+    }
+
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<TicketStatusDto> args)
+    {
+        DropDownSelectedTicketStatus.Id = args.ItemData.Id;
+    }
+
+    public async void ActionBeginHandler1(ActionEventArgs<TicketDto> Args)
+    {
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
+        {
+            Args.Data.Notifier = Username;
+            Args.Data.TicketDate = DateTime.Now;
+            Args.Data.TicketStatusId = 1;
+        }
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            Args.Data = Args.PreviousData;
+        }
+
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.TicketStatusId = DropDownSelectedTicketStatus.Id;
+                Args.Data.DeviceId = DropDownSelectedDevice.Id;
+                await TicketService.AddTicket(Args.Data, Args.Data.DeviceId);
+                TicketsList = (await TicketService.GetAllTickets()).Where(i => i.Notifier == Username).ToList();
+                TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+                ticketEditGrid.Refresh();
+            }
+            else
+            {
+                Args.Data.Notifier = Username;
+                await TicketService.UpdateTicket(Args.Data, Args.Data.DeviceId, Args.Data.Id);
+                TicketsList = (await TicketService.GetAllTickets()).Where(i => i.Notifier == Username).ToList();
+                TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+                ticketEditGrid.Refresh();
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await TicketService.DeleteTicket(Args.Data.Id, Args.Data.DeviceId);
+        }
+    }
+}

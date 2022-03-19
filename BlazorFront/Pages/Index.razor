@@ -2,6 +2,7 @@
 @using BlazorFront.Models
 @using Syncfusion.Blazor.Grids
 @inject NavigationManager UriHelper
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 @attribute [Authorize(Roles = "Administrator, Manager")]
 
 
@@ -55,7 +56,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var name = user.Identity.Name;
         Datas = (await DeviceService.GetDevices());
         Device = Datas.devices;
     }

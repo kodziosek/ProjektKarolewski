@@ -13,6 +13,7 @@ namespace ProjektKarolewski.Services
         int Create(int deviceId, CreateTicketDto createTicketDto);
         TicketDto GetById(int deviceId, int ticketId);
         List<TicketDto> GetAll(int deviceId);
+        List<TicketDto> GetAll();
         void RemoveById(int deviceId, int ticketId);
         void Update(int deviceId, TicketDto ticketDto, int ticketId);
     }
@@ -52,6 +53,19 @@ namespace ProjektKarolewski.Services
             
 
             var ticketDtos = _mapper.Map<List<TicketDto>>(ticket);
+            return ticketDtos;
+        }
+
+        public List<TicketDto> GetAll()
+        {
+
+            var tickets = _context.Tickets
+                .Include(i => i.TicketStatus)
+                .Include(i => i.Device)
+                .ToList();
+
+            var ticketDtos = _mapper.Map<List<TicketDto>>(tickets);
+
             return ticketDtos;
         }
 

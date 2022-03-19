@@ -23,7 +23,8 @@ namespace ProjektKarolewski
             CreateMap<InspectionType, InspectionTypeDto>();
             CreateMap<Inspection, InspectionDto>()
                 .ForMember(m => m.Service, c => c.MapFrom(s => s.Service.ServiceName))
-                .ForMember(m => m.InspectionType, c => c.MapFrom(s => s.InspectionType.Name));
+                .ForMember(m => m.InspectionType, c => c.MapFrom(s => s.InspectionType.Name))
+                .ForMember(m => m.DeviceName, c => c.MapFrom(s => s.Device.Name));
 
             CreateMap<Reply, ReplyDto>();
             CreateMap<Ticket, TicketDto>()

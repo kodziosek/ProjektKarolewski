@@ -18,6 +18,11 @@ namespace BlazorFront.Services
             this.httpClient = httpClient;
         }
 
+        public async Task<IEnumerable<TicketDto>> GetAllTickets()
+        {
+            return await httpClient.GetFromJsonAsync<IEnumerable<TicketDto>>($"api/notifications/tickets");
+        }
+
         public async Task<IEnumerable<TicketDto>> GetTicketByDevice(int deviceId)
         {
             return await httpClient.GetFromJsonAsync<IEnumerable<TicketDto>>($"api/device/{deviceId}/ticket/");

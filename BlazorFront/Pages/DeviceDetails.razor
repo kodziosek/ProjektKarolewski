@@ -7,6 +7,7 @@
 @using System;
 @using System.IO;
 @inject NavigationManager UriHelper
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 
 
@@ -35,10 +36,9 @@
                     var inspection = (context as InspectionDto);
                     string name = inspection.Scan;
                 }
-                    <div class="link">
-                        <a href="@($"/PrivateFiles/{name}")">@name</a>
-                    </div>
-                
+                <div class="link">
+                    <a href="@($"/PrivateFiles/{name}")">@name</a>
+                </div>
             </Template>
             <EditTemplate>
                 <label>Skan dokumentu</label>
@@ -68,7 +68,7 @@
         </GridColumn>
     </GridColumns>
 </SfGrid>
-<p>Zgłoszenia</p>
+<p style="padding-top: 10px">Zgłoszenia</p>
 <SfGrid @ref="ticketEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Tickets" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
@@ -79,7 +79,7 @@
         <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Format="d" Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.TicketDescription)" HeaderText="Opis zgłoszenia" Width="200"></GridColumn>
-        <GridColumn Field="@nameof(TicketDto.Notifier)" HeaderText="Zgłaszający"></GridColumn>
+        <GridColumn AllowAdding="false" AllowEditing="false" Field="@nameof(TicketDto.Notifier)" HeaderText="Zgłaszający"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.TicketStatus)" HeaderText="Status">
             <EditTemplate>
                 <label>Status zgłoszenia</label>
@@ -118,6 +118,7 @@
     InspectionTypeDto DropDownSelectedInspectionType = new InspectionTypeDto();
     ServiceDto DropDownSelectedService = new ServiceDto();
     public string filename;
+    public string Username;
 
     public SfGrid<InspectionDto> inspectionEditGrid { get; set; }
 
@@ -147,6 +148,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        Username = user.Identity.Name;
         int DevId = Int32.Parse(DeviceId);
         Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
         InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
@@ -178,7 +182,7 @@
 
     public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)
     {
-        if(Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
         {
             Args.Data.InspectionDate = DateTime.Now;
         }
@@ -221,8 +225,9 @@
     public async void ActionBeginHandler1(ActionEventArgs<TicketDto> Args)
     {
 
-        if(Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
         {
+            Args.Data.Notifier = Username;
             Args.Data.TicketDate = DateTime.Now;
             Args.Data.TicketStatusId = 1;
         }
@@ -246,6 +251,7 @@
             }
             else
             {
+                Args.Data.Notifier = Username;
                 await TicketService.UpdateTicket(Args.Data, DevId, Args.Data.Id);
                 Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
                 TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();

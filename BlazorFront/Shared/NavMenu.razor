@@ -1,27 +1,36 @@
 ﻿@using Syncfusion.Blazor.Navigations
 
  <div class="dock">
-                    <ul>
-                        <li class="sidebar-item" id="toggle" @onclick="@Toggle">
-                            <span class="e-icons expand"></span>
-                            <span class="e-text" title="menu">Menu</span>
-                        </li>
-                        <li class="sidebar-item">
-                             <NavLink class="nlink" rel='nofollow' href="deviceedit"> 
-                                <span class="e-icons home"></span>
-                                <span class="e-text" title="deviceedit">Zarządzanie</span>
-                            </NavLink>
-                        </li>
-                        <li class="sidebar-item">
-                            <span class="e-icons profile"></span>
-                            <span class="e-text" title="profile">Profile</span>
-                        </li>
-                        <li class="sidebar-item">
-                            <span class="e-icons info"></span>
-                            <span class="e-text" title="info">Info</span>
-                        </li>
-                    </ul>
-                </div>
+     <ul>
+         <li class="sidebar-item" id="toggle" @onclick="@Toggle">
+             <span class="e-icons expand"></span>
+             <span class="e-text" title="menu">Menu</span>
+         </li>
+         <NavLink class="nlink" rel='nofollow' href="devices">
+             <li class="sidebar-item">
+                 <span class="e-icons drop-down"></span>
+                 <span class="e-text" title="info">Urządzenia</span>
+             </li>
+         </NavLink>
+         <NavLink class="nlink" rel='nofollow' href="deviceedit">
+             <li class="sidebar-item">
+                 <span class="e-icons home"></span>
+                 <span class="e-text" title="deviceedit">Zarządzanie urządzeniami</span>
+             </li>
+         </NavLink>
+         <NavLink class="nlink" rel='nofollow' href="notifications">
+             <li class="sidebar-item">
+                 <span class="e-icons info"></span>
+                 <span class="e-text" title="info">Powiadomienia</span>
+             </li>
+         </NavLink>
+         <li class="sidebar-item">
+             <span class="e-icons profile"></span>
+             <span class="e-text" title="profile">Profile</span>
+         </li>
+     </ul>
+</div>
+
 @code {
 
     [Parameter]

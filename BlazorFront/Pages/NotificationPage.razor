@@ -1,0 +1,105 @@
+﻿@page "/notifications"
+@using BlazorFront.Models
+@using ProjektKarolewski.Models
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using System;
+@using System.IO;
+@inject NavigationManager UriHelper
+
+
+
+@{
+    var SearchTool = new List<string>() { "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
+
+<h3>Przeglądy</h3>
+<SfGrid @ref="inspectionEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Inspections" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnRecordDoubleClick="RecordDoubleClickHandler" TValue="InspectionDto"></GridEvents>
+    <GridColumns>
+        <GridColumn AllowAdding="false" Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.DeviceName)" HeaderText="Nazwa urządzenia"></GridColumn>
+        <GridColumn Format="d" Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.InspectionFrequency)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Warranty)" HeaderText="Gwarancja"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Scan)" HeaderText="Skan"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.InspectionType)" HeaderText="Rodzaj przeglądu"></GridColumn>
+        <GridColumn Field="@nameof(InspectionDto.Service)" HeaderText="Serwisant" Width="200"></GridColumn>
+    </GridColumns>
+</SfGrid>
+<div><h3>Zgłoszenia</h3></div>
+<SfGrid @ref="ticketEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Tickets" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnRecordDoubleClick="RecordDoubleClickHandler" TValue="TicketDto"></GridEvents>
+    <GridColumns>
+        <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Nazwa urządzenia"></GridColumn>
+        <GridColumn Format="d" Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.TicketDescription)" HeaderText="Opis zgłoszenia" Width="200"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.Notifier)" HeaderText="Zgłaszający"></GridColumn>
+        <GridColumn Field="@nameof(TicketDto.TicketStatus)" HeaderText="Status"></GridColumn>
+    </GridColumns>
+</SfGrid>
+<style>
+    .e-grid .e-headercell {
+        background-color: gray;
+    }
+
+    .e-headercell {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+@code{
+    [Parameter]
+    public string DeviceId { get; set; }
+
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px" };
+
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+    public List<InspectionDto> Inspections { get; set; }
+
+    public string deviceName { get; set; }
+
+
+    public SfGrid<InspectionDto> inspectionEditGrid { get; set; }
+
+    [Inject]
+    public IInspectionService InspectionService { get; set; }
+
+    public List<TicketDto> Tickets { get; set; }
+
+    public SfGrid<TicketDto> ticketEditGrid { get; set; }
+
+    [Inject]
+    public ITicketService TicketService { get; set; }
+
+
+    [Inject]
+    public IDeviceService DeviceService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    { 
+        Inspections = (await InspectionService.GetAllInspections()).Where(i => (i.InspectionDate.AddYears(i.InspectionFrequency)).CompareTo(DateTime.Now.AddMonths(2)) < 0 ).ToList();
+        Tickets = (await TicketService.GetAllTickets()).Where(i => i.TicketStatusId == 1).ToList();
+
+    }
+    public void RecordDoubleClickHandler(RecordDoubleClickEventArgs<InspectionDto> args)
+    {
+        UriHelper.NavigateTo($"/devicedetails/{args.RowData.DeviceId}");
+    }
+    public void RecordDoubleClickHandler(RecordDoubleClickEventArgs<TicketDto> args)
+    {
+        UriHelper.NavigateTo($"/devicedetails/{args.RowData.DeviceId}");
+    }
+}

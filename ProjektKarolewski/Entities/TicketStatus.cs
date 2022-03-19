@@ -7,7 +7,7 @@ namespace ProjektKarolewski.Entities
         public int Id { get; set; }
         public string StatusName { get; set; }
 
-        public virtual List<Reply> Replies { get; set; }
+        public virtual List<Ticket> Tickets { get; set; }
 
     }
 }

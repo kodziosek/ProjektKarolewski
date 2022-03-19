@@ -16,7 +16,8 @@ namespace ProjektKarolewski.Models
         public string InspectionType { get; set; }
         public int ServiceId { get; set; }
         public string Service { get; set; }
-
+        public int DeviceId { get; set; }
+        public string DeviceName { get; set; }
 
     }
 }
