@@ -1,4 +1,4 @@
-﻿@page "/tickets/{ticketId}/replies"
+﻿@page "/devicedetails/{DeviceId}/tickets/{TicketId}/replies"
 @using BlazorFront.Models
 @using ProjektKarolewski.Models
 @using Syncfusion.Blazor.DropDowns
@@ -18,7 +18,7 @@
 
 
 <p style="padding-top: 10px">Odpowiedzi</p>
-<SfGrid @ref="replyEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Inspections" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+<SfGrid @ref="replyEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Reply" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
@@ -26,8 +26,8 @@
     <GridEvents OnActionBegin="ActionBeginHandler" TValue="ReplyDto"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" Field="@nameof(ReplyDto.Id)" HeaderText="ID" Width="80"></GridColumn>
-        <GridColumn Format="d" Field="@nameof(ReplyDto.ReplyDate)" HeaderText="Data przeglądu"></GridColumn>
-        <GridColumn Field="@nameof(ReplyDto.ReplyDescription)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
+        <GridColumn Format="d" Field="@nameof(ReplyDto.ReplyDate)" HeaderText="Data odpowiedzi"></GridColumn>
+        <GridColumn Field="@nameof(ReplyDto.ReplyDescription)" HeaderText="Treść odpowiedzi" Width="200"></GridColumn>
         <GridColumn Field="@nameof(ReplyDto.ReplyProtocol)" HeaderText="Skan">
             <Template>
                 @{
@@ -35,7 +35,7 @@
                     string name = reply.ReplyProtocol;
                 }
                 <div class="link">
-                    <a href="@($"/RepliesProtocoles/{name}")">@name</a>
+                    <a href="@($"/PrivateFiles/{name}")">@name</a>
                 </div>
             </Template>
             <EditTemplate>
@@ -62,47 +62,29 @@
 
 @code{
     [Parameter]
+    public string DeviceId { get; set; }
+    [Parameter]
     public string TicketId { get; set; }
 
     private DialogSettings DialogParams = new DialogSettings { Width = "550px" };
 
     public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
 
-    public List<InspectionDto> Inspections { get; set; }
-    public List<InspectionTypeDto> InspectionTypes { get; set; }
-    public List<ServiceDto> Services { get; set; }
-    public string deviceName { get; set; }
-    InspectionTypeDto DropDownSelectedInspectionType = new InspectionTypeDto();
-    ServiceDto DropDownSelectedService = new ServiceDto();
     public string filename;
     public string Username;
-    public int DeviceId;
-
-    public SfGrid<InspectionDto> inspectionEditGrid { get; set; }
-
-    [Inject]
-    public IInspectionService InspectionService { get; set; }
-
-    [Inject]
-    public IInspectionTypeService InspectionTypeService { get; set; }
-
-    [Inject]
-    public IServiceService ServiceService { get; set; }
 
     public List<TicketDto> Tickets { get; set; }
-    public List<TicketStatusDto> TicketStatuses { get; set; }
+    public List<ReplyDto> Reply { get; set; }
     TicketStatusDto DropDownSelectedTicketStatus = new TicketStatusDto();
 
-    public SfGrid<TicketDto> ticketEditGrid { get; set; }
+    public SfGrid<ReplyDto> replyEditGrid { get; set; }
 
     [Inject]
     public ITicketService TicketService { get; set; }
 
     [Inject]
-    public ITicketStatusService TicketStatusService { get; set; }
+    public IReplyService ReplyService { get; set; }
 
-    [Inject]
-    public IDeviceService DeviceService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -110,8 +92,9 @@
         var user = authstate.User;
         Username = user.Identity.Name;
         int TickId = Int32.Parse(TicketId);
-        Replies = (await TicketService.GetTicketByDevice(TickId)).ToList();
-        Tickets = (await TicketService.GetTicketByDevice(TickId)).ToList();
+        int DevId = Int32.Parse(DeviceId);
+        Reply = (await ReplyService.GetReplyByTicket(DevId, TickId)).ToList();
+        Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
     }
 
     public void OnSuccess(SuccessEventArgs args)
@@ -119,11 +102,11 @@
         filename = args.File.Name.ToString();
     }
 
-    public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)
+    public async void ActionBeginHandler(ActionEventArgs<ReplyDto> Args)
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Add))
         {
-            Args.Data.InspectionDate = DateTime.Now;
+            Args.Data.ReplyDate = DateTime.Now;
         }
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
@@ -131,34 +114,31 @@
             Args.Data = Args.PreviousData;
         }
 
+        int DevId = Int32.Parse(DeviceId);
         int TickId = Int32.Parse(TicketId);
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
             if (Args.Action == "Add")
             {
-                Args.Data.InspectionTypeId = DropDownSelectedInspectionType.Id;
-                Args.Data.ServiceId = DropDownSelectedService.Id;
-                Args.Data.Scan = filename;
-                await InspectionService.AddInspection(Args.Data, DevId);
-                Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
-                InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
-                Services = (await ServiceService.GetServices()).ToList();
-                inspectionEditGrid.Refresh();
+                Args.Data.ReplyProtocol = filename;
+                await ReplyService.AddReply(Args.Data, DevId, TickId);
+                Reply = (await ReplyService.GetReplyByTicket(DevId, TickId)).ToList();
+                Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
+                replyEditGrid.Refresh();
             }
             else
             {
-                Args.Data.Scan = filename;
-                await InspectionService.UpdateInspection(Args.Data, DevId, Args.Data.Id);
-                Inspections = (await InspectionService.GetInspectionByDevice(DevId)).ToList();
-                InspectionTypes = (await InspectionTypeService.GetInspectionTypes()).ToList();
-                Services = (await ServiceService.GetServices()).ToList();
-                inspectionEditGrid.Refresh();
+                Args.Data.ReplyProtocol = filename;
+                await ReplyService.UpdateReply(Args.Data, DevId, TickId, Args.Data.Id);
+                Reply = (await ReplyService.GetReplyByTicket(DevId, TickId)).ToList();
+                Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
+                replyEditGrid.Refresh();
             }
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
-            await InspectionService.DeleteInspection(Args.Data.Id, DevId);
+            await ReplyService.DeleteReply(TickId, DevId, Args.Data.Id);
         }
     }
 }
