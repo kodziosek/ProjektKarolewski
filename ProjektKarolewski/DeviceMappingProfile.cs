@@ -18,6 +18,9 @@ namespace ProjektKarolewski
 
             CreateMap<Ward, WardDto>();
             CreateMap<Producer, ProducerDto>();
+            CreateMap<Contract, ContractDto>();
+            CreateMap<User, UserDto>()
+                .ForMember(m => m.Role, c => c.MapFrom(s => s.Role.Name));
             CreateMap<Service, ServiceDto>()
                 .ForMember(m => m.Contract, c => c.MapFrom(s => s.Contract.Name));
             CreateMap<InspectionType, InspectionTypeDto>();
@@ -34,6 +37,9 @@ namespace ProjektKarolewski
             CreateMap<TicketStatus, TicketStatusDto>();
 
             CreateMap<CreateDeviceDto, Device>();
+            CreateMap<CreateServiceDto, Service>();
+            CreateMap<CreateWardDto, Ward>();
+            CreateMap<CreateProducerDto, Producer>();
 
             CreateMap<CreateInspectionDto, Inspection>();
             CreateMap<CreateTicketDto, Ticket>();

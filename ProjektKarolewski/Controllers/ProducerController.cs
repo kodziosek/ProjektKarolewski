@@ -37,7 +37,7 @@ namespace ProjektKarolewski.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post( [FromBody] ProducerDto dto)
+        public ActionResult Post( [FromBody] CreateProducerDto dto)
         {
             var newProducerId = _producerService.Create(dto);
 

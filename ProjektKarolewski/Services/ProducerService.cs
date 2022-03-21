@@ -13,7 +13,7 @@ namespace ProjektKarolewski.Services
     public interface IProducerService
     {
         IEnumerable<ProducerDto> GetAll();
-        int Create(ProducerDto dto);
+        int Create(CreateProducerDto dto);
         ProducerDto GetById(int producerId);
         void RemoveById(int producerId);
         void Update(int producerId, ProducerDto dto);
@@ -29,7 +29,7 @@ namespace ProjektKarolewski.Services
             _mapper = mapper;
         }
 
-        public int Create(ProducerDto dto)
+        public int Create(CreateProducerDto dto)
         {
 
             var producer = _mapper.Map<Producer>(dto);

@@ -13,7 +13,7 @@ namespace ProjektKarolewski.Services
     public interface IWardService
     {
         IEnumerable<WardDto> GetAll();
-        int Create(WardDto dto);
+        int Create(CreateWardDto dto);
         WardDto GetById(int wardId);
         void RemoveById(int wardId);
         void Update(int wardId, WardDto dto);
@@ -29,7 +29,7 @@ namespace ProjektKarolewski.Services
             _mapper = mapper;
         }
 
-        public int Create(WardDto dto)
+        public int Create(CreateWardDto dto)
         {
 
             var ward = _mapper.Map<Ward>(dto);

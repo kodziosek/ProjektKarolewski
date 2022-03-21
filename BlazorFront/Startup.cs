@@ -103,6 +103,14 @@ namespace BlazorFront
             {
                 client.BaseAddress = new Uri("https://localhost:5001/");
             });
+            services.AddHttpClient<IUserService, UserService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001/");
+            });
+            services.AddHttpClient<IContractService, ContractService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001/");
+            });
             services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
         }

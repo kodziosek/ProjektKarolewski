@@ -22,5 +22,25 @@ namespace BlazorFront.Services
         {
             return await httpClient.GetFromJsonAsync<IEnumerable<WardDto>>("api/ward");
         }
+
+        public async Task<IEnumerable<WardDto>> GetWardById(int wardId)
+        {
+            return await httpClient.GetFromJsonAsync<IEnumerable<WardDto>>($"api/ward/{wardId}");
+        }
+        public async Task<WardDto> AddWard(WardDto ward)
+        {
+            var response = await httpClient.PostAsJsonAsync<WardDto>($"api/ward/", ward);
+            return await response.Content.ReadFromJsonAsync<WardDto>();
+        }
+        public async Task DeleteWard(int wardId)
+        {
+            await httpClient.DeleteAsync($"api/ward/{wardId}");
+        }
+        public async Task<WardDto> UpdateWard(WardDto ward, int wardId)
+        {
+            var response = await httpClient.PutAsJsonAsync<WardDto>($"api/producer/{wardId}", ward);
+            return await response.Content.ReadFromJsonAsync<WardDto>();
+        }
+
     }
 }

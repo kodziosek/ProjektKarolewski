@@ -21,7 +21,9 @@ namespace ProjektKarolewski.Services
     {
         void RegisterUser(RegisterUserDto dto);
         string GenerateJwt(LoginDto dto);
-        void ChangePassword(RegisterUserDto dto);
+        void ChangePassword(int userId, RegisterUserDto dto);
+        IEnumerable<UserDto> GetAll();
+        void Update(int id, UserDto dto);
     }
     public class AccountService : IAccountService
     {
@@ -53,15 +55,29 @@ namespace ProjektKarolewski.Services
             _context.SaveChanges();
         }
 
-        public void ChangePassword(RegisterUserDto dto)
+        public void ChangePassword(int userId, RegisterUserDto dto)
         {
             var user = _context.Users
                 .Include(u => u.Role)
-                .FirstOrDefault(u => u.Username == dto.Username);
+                .FirstOrDefault(u => u.Id == userId);
 
             var hashedPassword = _passwordHasher.HashPassword(user, dto.Password);
 
             user.PasswordHash = hashedPassword;
+            _context.SaveChanges();
+        }
+
+        public void Update(int id, UserDto dto)
+        {
+            var user = _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(u => u.Id == id);
+
+
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
+            user.RoleId = dto.RoleId;
+
             _context.SaveChanges();
         }
 

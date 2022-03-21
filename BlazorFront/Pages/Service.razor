@@ -1,0 +1,150 @@
+﻿@page "/service"
+@using BlazorFront.Models
+@using ProjektKarolewski.Models
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using System;
+@using System.IO;
+@inject NavigationManager UriHelper
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+
+
+
+@{
+    var SearchTool = new List<string>() { "Add", "Cancel", "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
+
+
+<p style="padding-top: 10px">Zgłoszenia</p>
+<SfGrid @ref="serviceEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@ServiceList" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler1" TValue="ServiceDto"></GridEvents>
+    <GridColumns>
+        <GridColumn AllowAdding="false" Field="@nameof(ServiceDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(ServiceDto.ServiceName)" HeaderText="Nazwa firmy"></GridColumn>
+        <GridColumn Field="@nameof(ServiceDto.Street)" HeaderText="Ulica"></GridColumn>
+        <GridColumn Field="@nameof(ServiceDto.City)" HeaderText="Miasto"></GridColumn>
+        <GridColumn Field="@nameof(ServiceDto.PostalCode)" HeaderText="Kod pocztowy"></GridColumn>
+        <GridColumn Field="@nameof(ServiceDto.PhoneNumber)" HeaderText="Numer telefonu"></GridColumn>
+        <GridColumn Field="@nameof(ServiceDto.EmailAddress)" HeaderText="Adres e-mail"></GridColumn>
+        <GridColumn Field="@nameof(ServiceDto.Contract)" HeaderText="Status">
+            <EditTemplate>
+                <label>Rodzaj umowy</label>
+                <SfDropDownList DataSource="@Contracts" TItem="ContractDto" TValue="int" @bind-Value="@((context as ServiceDto).ContractId)">
+                    <DropDownListEvents TItem="ContractDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+        <GridColumn HeaderText="Akcje" Width="110">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+<style>
+    .e-grid .e-headercell {
+        background-color: gray;
+    }
+
+    .e-headercell {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+@code{
+
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px", MinHeight = "600px" };
+
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+    public string Username;
+
+
+    public List<ServiceDto> ServiceList { get; set; }
+    public List<ContractDto> Contracts { get; set; }
+
+
+    ContractDto DropDownSelectedContract = new ContractDto();
+
+
+    public SfGrid<ServiceDto> serviceEditGrid { get; set; }
+
+    [Inject]
+    public IServiceService ServiceService { get; set; }
+
+    [Inject]
+    public IContractService ContractService { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        Username = user.Identity.Name;
+        ServiceList = (await ServiceService.GetServices()).ToList();
+        Contracts = (await ContractService.GetContracts()).ToList();
+
+    }
+
+
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<ContractDto> args)
+    {
+        DropDownSelectedContract.Id = args.ItemData.Id;
+    }
+
+
+
+    public async void ActionBeginHandler1(ActionEventArgs<ServiceDto> Args)
+    {
+
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            Args.Data = Args.PreviousData;
+        }
+
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.ContractId = DropDownSelectedContract.Id;
+                await ServiceService.AddService(Args.Data);
+                ServiceList = (await ServiceService.GetServices()).ToList();
+                Contracts = (await ContractService.GetContracts()).ToList();
+                serviceEditGrid.Refresh();
+            }
+            else
+            {
+                Args.Data.ContractId = DropDownSelectedContract.Id;
+                await ServiceService.UpdateService(Args.Data, Args.Data.Id);
+                ServiceList = (await ServiceService.GetServices()).ToList();
+                Contracts = (await ContractService.GetContracts()).ToList();
+                serviceEditGrid.Refresh();
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await ServiceService.DeleteService(Args.Data.Id);
+        }
+    }
+}

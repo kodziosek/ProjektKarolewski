@@ -10,5 +10,9 @@ namespace BlazorFront.Services
     public interface IWardService
     {
         Task<IEnumerable<WardDto>> GetWards();
+        Task<IEnumerable<WardDto>> GetWardById(int wardId);
+        Task<WardDto> AddWard(WardDto ward);
+        Task DeleteWard(int wardId);
+        Task<WardDto> UpdateWard(WardDto ward, int wardId);
     }
 }
