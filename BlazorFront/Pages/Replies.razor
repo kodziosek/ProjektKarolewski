@@ -46,6 +46,20 @@
                 </SfUploader>
             </EditTemplate>
         </GridColumn>
+        <GridColumn HeaderText="Akcje" Width="110">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
     </GridColumns>
 </SfGrid>
 <style>

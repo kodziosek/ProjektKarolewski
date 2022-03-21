@@ -23,15 +23,15 @@
     <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
-    <GridEvents OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
+    <GridEvents CommandClicked="CommandClickHandler" OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Nazwa urządzenia">
             <EditTemplate>
                 <label>Urządzenie</label>
-                <SfDropDownList DataSource="@TicketStatuses" TItem="TicketStatusDto" TValue="int" @bind-Value="@((context as TicketDto).TicketStatusId)">
-                    <DropDownListEvents TItem="TicketStatusDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
-                    <DropDownListFieldSettings Text="StatusName" Value="Id"></DropDownListFieldSettings>
+                <SfDropDownList DataSource="@Devices" TItem="DeviceData" TValue="int" @bind-Value="@((context as TicketDto).DeviceId)">
+                    <DropDownListEvents TItem="DeviceData" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
                 </SfDropDownList>
             </EditTemplate>
         </GridColumn>
@@ -46,6 +46,25 @@
                     <DropDownListFieldSettings Text="StatusName" Value="Id"></DropDownListFieldSettings>
                 </SfDropDownList>
             </EditTemplate>
+        </GridColumn>
+        <GridColumn HeaderText="Akcje" Width="165">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.None" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-description",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
         </GridColumn>
     </GridColumns>
 </SfGrid>
@@ -63,7 +82,7 @@
 
 @code{
 
-    private DialogSettings DialogParams = new DialogSettings { Width = "550px" };
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px", MinHeight = "600px" };
 
     public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
 
@@ -71,14 +90,14 @@
     public string deviceName { get; set; }
     public string Username;
 
-
+    public DeviceResults Datas { get; set; }
 
     public List<TicketDto> TicketsList { get; set; }
     public List<TicketStatusDto> TicketStatuses { get; set; }
-    public List<DeviceDto> Devices { get; set; }
+    public List<DeviceData> Devices { get; set; }
 
     TicketStatusDto DropDownSelectedTicketStatus = new TicketStatusDto();
-    DeviceDto DropDownSelectedDevice = new DeviceDto();
+    DeviceData DropDownSelectedDevice = new DeviceData();
 
     public SfGrid<TicketDto> ticketEditGrid { get; set; }
 
@@ -98,10 +117,20 @@
         Username = user.Identity.Name;
         TicketsList = (await TicketService.GetAllTickets()).Where(i => i.Notifier == Username).ToList();
         TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+        Datas = (await DeviceService.GetDevices());
+        Devices = Datas.devices;
 
     }
 
-    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<DeviceDto> args)
+    public void CommandClickHandler(CommandClickEventArgs<TicketDto> args)
+    {
+        if (args.CommandColumn.Type == CommandButtonType.None)
+        {
+            UriHelper.NavigateTo($"/devicedetails/{args.RowData.DeviceId}/tickets/{args.RowData.Id}/replies");
+        }
+    }
+
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<DeviceData> args)
     {
         DropDownSelectedDevice.Id = args.ItemData.Id;
     }
@@ -119,6 +148,7 @@
             Args.Data.Notifier = Username;
             Args.Data.TicketDate = DateTime.Now;
             Args.Data.TicketStatusId = 1;
+            Args.Data.DeviceId = 1;
         }
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
@@ -136,6 +166,8 @@
                 await TicketService.AddTicket(Args.Data, Args.Data.DeviceId);
                 TicketsList = (await TicketService.GetAllTickets()).Where(i => i.Notifier == Username).ToList();
                 TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+                Datas = (await DeviceService.GetDevices());
+                Devices = Datas.devices;
                 ticketEditGrid.Refresh();
             }
             else
@@ -144,6 +176,8 @@
                 await TicketService.UpdateTicket(Args.Data, Args.Data.DeviceId, Args.Data.Id);
                 TicketsList = (await TicketService.GetAllTickets()).Where(i => i.Notifier == Username).ToList();
                 TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
+                Datas = (await DeviceService.GetDevices());
+                Devices = Datas.devices;
                 ticketEditGrid.Refresh();
             }
         }

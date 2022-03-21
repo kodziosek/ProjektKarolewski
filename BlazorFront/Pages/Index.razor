@@ -16,7 +16,7 @@
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
-    <GridEvents OnRecordDoubleClick="RecordDoubleClickHandler" TValue="DeviceData"></GridEvents>
+    <GridEvents CommandClicked="CommandClickHandler" OnRecordDoubleClick="RecordDoubleClickHandler" TValue="DeviceData"></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(DeviceData.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.Name)" HeaderText="Nazwa"></GridColumn>
@@ -29,6 +29,15 @@
         <GridColumn Field="@nameof(DeviceData.Comments)" HeaderText="Komentarz"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.Ward)" HeaderText="Oddział"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.Producer)" HeaderText="Producent"></GridColumn>
+        <GridColumn HeaderText="Akcje" Width="55">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.None" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-description",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
     </GridColumns>
 </SfGrid>
 <style>
@@ -62,6 +71,16 @@
         Datas = (await DeviceService.GetDevices());
         Device = Datas.devices;
     }
+
+
+    public void CommandClickHandler(CommandClickEventArgs<DeviceData> args)
+    {
+        if (args.CommandColumn.Type == CommandButtonType.None)
+        {
+             UriHelper.NavigateTo($"/devicedetails/{args.RowData.Id}");
+        }
+    }
+
     public void RecordDoubleClickHandler(RecordDoubleClickEventArgs<DeviceData> args)
     {
         UriHelper.NavigateTo($"/devicedetails/{args.RowData.Id}");

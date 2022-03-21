@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjektKarolewski.Controllers;
@@ -20,20 +21,22 @@ namespace ProjektKarolewski.Services
     {
         void RegisterUser(RegisterUserDto dto);
         string GenerateJwt(LoginDto dto);
+        void ChangePassword(RegisterUserDto dto);
     }
     public class AccountService : IAccountService
     {
         private readonly ProjektDbContext _context;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
+        private readonly IMapper _mapper;
 
-        public AccountService(ProjektDbContext context, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        public AccountService(ProjektDbContext context, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings, IMapper mapper)
         {
             _context = context;
             _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
+            _mapper = mapper;
         }
-
 
         public void RegisterUser(RegisterUserDto dto)
         {
@@ -48,6 +51,30 @@ namespace ProjektKarolewski.Services
             newUser.PasswordHash = hashedPassword;
             _context.Users.Add(newUser);
             _context.SaveChanges();
+        }
+
+        public void ChangePassword(RegisterUserDto dto)
+        {
+            var user = _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(u => u.Username == dto.Username);
+
+            var hashedPassword = _passwordHasher.HashPassword(user, dto.Password);
+
+            user.PasswordHash = hashedPassword;
+            _context.SaveChanges();
+        }
+
+        public IEnumerable<UserDto> GetAll()
+        {
+            var users = _context
+                .Users
+                .Include(i => i.Role)
+                .ToList();
+
+            var userDtos = _mapper.Map<List<UserDto>>(users);
+
+            return userDtos;
         }
 
         public string GenerateJwt(LoginDto dto)

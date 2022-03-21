@@ -66,6 +66,20 @@
                 </SfDropDownList>
             </EditTemplate>
         </GridColumn>
+        <GridColumn HeaderText="Akcje" Width="110">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
     </GridColumns>
 </SfGrid>
 <p style="padding-top: 10px">Zgłoszenia</p>
@@ -74,7 +88,7 @@
     <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
-    <GridEvents OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
+    <GridEvents CommandClicked="CommandClickHandler" OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Format="d" Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
@@ -88,6 +102,25 @@
                     <DropDownListFieldSettings Text="StatusName" Value="Id"></DropDownListFieldSettings>
                 </SfDropDownList>
             </EditTemplate>
+        </GridColumn>
+        <GridColumn HeaderText="Akcje" Width="165">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.None" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-description",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
         </GridColumn>
     </GridColumns>
 </SfGrid>
@@ -178,6 +211,15 @@
     public void OnSuccess(SuccessEventArgs args)
     {
         filename = args.File.Name.ToString();
+    }
+
+    public void CommandClickHandler(CommandClickEventArgs<TicketDto> args)
+    {
+        if (args.CommandColumn.Type == CommandButtonType.None)
+        {
+             UriHelper.NavigateTo($"/devicedetails/{args.RowData.DeviceId}/tickets/{args.RowData.Id}/replies");
+        }
+        
     }
 
     public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)

@@ -70,7 +70,7 @@
                          IconCss = "e-icons e-delete",
                          CssClass = "e-flat"
                      })"></GridCommandColumn>
-                <GridCommandColumn Type="CommandButtonType.None" ButtonOption="@(new CommandButtonOptions()
+                <GridCommandColumn ID="next" Type="CommandButtonType.None" ButtonOption="@(new CommandButtonOptions()
                      {
                          IconCss = "e-icons e-description",
                          CssClass = "e-flat"
@@ -160,7 +160,10 @@
 
     public void CommandClickHandler(CommandClickEventArgs<DeviceData> args)
     {
-        UriHelper.NavigateTo($"/devicedetails/{args.RowData.Id}");
+        if (args.CommandColumn.Type == CommandButtonType.None)
+        {
+             UriHelper.NavigateTo($"/devicedetails/{args.RowData.Id}");
+        }
     }
 
     public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<ProducerDto> args)
