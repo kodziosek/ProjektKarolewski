@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ProjektKarolewski.Entities;
+using ProjektKarolewski.Exceptions;
 using ProjektKarolewski.Models;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,10 @@ namespace ProjektKarolewski.Services
     public interface IWardService
     {
         IEnumerable<WardDto> GetAll();
+        int Create(WardDto dto);
+        WardDto GetById(int wardId);
+        void RemoveById(int wardId);
+        void Update(int wardId, WardDto dto);
     }
     public class WardService : IWardService
     {
@@ -22,6 +27,60 @@ namespace ProjektKarolewski.Services
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public int Create(WardDto dto)
+        {
+
+            var ward = _mapper.Map<Ward>(dto);
+
+            _context.Wards.Add(ward);
+            _context.SaveChanges();
+
+            return ward.Id;
+        }
+
+        public WardDto GetById(int wardId)
+        {
+
+            var ward = _context.Wards
+                .FirstOrDefault(i => i.Id == wardId);
+            if (ward is null)
+            {
+                throw new NotFoundException("Ward not found");
+            }
+
+            var wardDto = _mapper.Map<WardDto>(ward);
+            return wardDto;
+        }
+
+        public void RemoveById(int wardId)
+        {
+
+            var ward = _context.Wards
+                .FirstOrDefault(i => i.Id == wardId);
+            if (ward is null)
+            {
+                throw new NotFoundException("Ward not found");
+            }
+
+            var wardDto = _mapper.Map<WardDto>(ward);
+            _context.Remove(ward);
+            _context.SaveChanges();
+        }
+
+        public void Update(int wardId, WardDto dto)
+        {
+            var ward = _context.Wards
+                .FirstOrDefault(i => i.Id == wardId);
+            if (ward is null)
+            {
+                throw new NotFoundException("Ward not found");
+            }
+
+            ward.Name = dto.Name;
+
+            _context.SaveChanges();
         }
 
         public IEnumerable<WardDto> GetAll()
