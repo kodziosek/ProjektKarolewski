@@ -12,28 +12,103 @@
 
 <SfDashboardLayout CellSpacing="@(new double[]{20 ,20 })" Columns="4">
     <DashboardLayoutPanels>
-        <DashboardLayoutPanel>
-            <ContentTemplate><div>1</div></ContentTemplate>
+        <DashboardLayoutPanel SizeX="1" SizeY="1">
+            <HeaderTemplate>
+                <div>Urządzenia</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <NavLink class="nlink" rel='nofollow' href="devices">
+                    <div class="e-icons drop-down">
+                        <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-menu-button" viewBox="0 0 16 16">
+                            <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h8A1.5 1.5 0 0 1 11 1.5v2A1.5 1.5 0 0 1 9.5 5h-8A1.5 1.5 0 0 1 0 3.5v-2zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-8z" />
+                            <path d="m7.823 2.823-.396-.396A.25.25 0 0 1 7.604 2h.792a.25.25 0 0 1 .177.427l-.396.396a.25.25 0 0 1-.354 0zM0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H1zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2h14zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
+                        </svg>
+                    </div>
+                </NavLink>
+            </ContentTemplate>
         </DashboardLayoutPanel>
-        <DashboardLayoutPanel   Column=1>
-            <ContentTemplate><div>2</div></ContentTemplate>
+        <DashboardLayoutPanel Column=1>
+            <HeaderTemplate>
+                <div>Zarządzanie urządzeniami</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <NavLink class="nlink" rel='nofollow' href="deviceedit">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-grid" viewBox="0 0 16 16">
+                            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+                        </svg>
+                    </div>
+                </NavLink>
+            </ContentTemplate>
         </DashboardLayoutPanel>
         <DashboardLayoutPanel Column=2>
-            <ContentTemplate><div>3</div></ContentTemplate>
+            <HeaderTemplate><div>Powiadomienia</div></HeaderTemplate>
+            <ContentTemplate>
+                <NavLink class="nlink" rel='nofollow' href="notifications">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                        </svg>
+                    </div>
+                </NavLink>
+            </ContentTemplate>
         </DashboardLayoutPanel>
         <DashboardLayoutPanel Row=1>
-            <ContentTemplate><div>4</div></ContentTemplate>
+            <HeaderTemplate><div>Moje zgłoszenia</div></HeaderTemplate>
+            <ContentTemplate>
+                <NavLink class="nlink" rel='nofollow' href="tickets">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-chat-left" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                        </svg>
+                    </div>
+                </NavLink>
+            </ContentTemplate>
         </DashboardLayoutPanel>
         <DashboardLayoutPanel Row=1 Column=1>
-            <ContentTemplate><div>5</div></ContentTemplate>
+            <HeaderTemplate><div>Ustawienia</div></HeaderTemplate>
+            <ContentTemplate>
+                <NavLink class="nlink" rel='nofollow' href="settings">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                        </svg>
+                    </div>
+                </NavLink>
+            </ContentTemplate>
         </DashboardLayoutPanel>
         <DashboardLayoutPanel Row=1 Column=2>
-            <ContentTemplate><div>6</div></ContentTemplate>
+            <HeaderTemplate><div>Użytkownicy</div></HeaderTemplate>
+            <ContentTemplate>
+                <NavLink class="nlink" rel='nofollow' href="users">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                        </svg>
+                    </div>
+                </NavLink>
+            </ContentTemplate>
         </DashboardLayoutPanel>
     </DashboardLayoutPanels>
 </SfDashboardLayout>
 
 <style>
+    svg{
+        color:black;
+        width: auto;
+        height: auto;
+    }
+    .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-header {
+        color: #754131;
+        background-color: #c9e2f7;
+        text-align: center;
+    }
+    .e-dashboardlayout.e-control .e-panel .e-panel-container .e-panel-content {
+        background-color: #fdc500;
+        padding: 50px;
+    }
     .e-panel-content {
         text-align: center;
         margin-top: 10px;
