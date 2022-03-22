@@ -1,0 +1,116 @@
+﻿@page "/wards"
+@using BlazorFront.Models
+@using ProjektKarolewski.Models
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using System;
+@using System.IO;
+@inject NavigationManager UriHelper
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+
+
+
+@{
+    var SearchTool = new List<string>() { "Add", "Cancel", "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
+
+
+<p style="padding-top: 10px">Oddziały</p>
+<SfGrid @ref="wardEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@WardList" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams"></GridEditSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler1" TValue="WardDto"></GridEvents>
+    <GridColumns>
+        <GridColumn AllowAdding="false" Field="@nameof(WardDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(WardDto.Name)" HeaderText="Nazwa oddziału"></GridColumn>
+        <GridColumn HeaderText="Akcje" Width="110">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+<style>
+    .e-grid .e-headercell {
+        background-color: gray;
+    }
+
+    .e-headercell {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+@code{
+
+    private DialogSettings DialogParams = new DialogSettings { Width = "550px", MinHeight = "600px" };
+
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+    public string Username;
+
+
+    public List<WardDto> WardList { get; set; }
+
+
+    public SfGrid<WardDto> wardEditGrid { get; set; }
+
+    [Inject]
+    public IWardService WardService { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        Username = user.Identity.Name;
+        WardList = (await WardService.GetWards()).ToList();
+
+    }
+
+
+    public async void ActionBeginHandler1(ActionEventArgs<WardDto> Args)
+    {
+
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            Args.Data = Args.PreviousData;
+        }
+
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                await WardService.AddWard(Args.Data);
+                WardList = (await WardService.GetWards()).ToList();
+                wardEditGrid.Refresh();
+            }
+            else
+            {
+                await WardService.UpdateWard(Args.Data, Args.Data.Id);
+                WardList = (await WardService.GetWards()).ToList();
+                wardEditGrid.Refresh();
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await WardService.DeleteWard(Args.Data.Id);
+        }
+    }
+}

@@ -10,7 +10,8 @@ namespace BlazorFront.Services
     {
         Task<IEnumerable<UserDto>> GetUsers();
         Task<UserDto> UpdateUser(UserDto user, int userId);
-        Task<RegisterUserDto> ChangePassword(RegisterUserDto user, int userId);
-        Task<RegisterUserDto> AddWard(RegisterUserDto user);
+        Task<UserDto> ChangePassword(UserDto user, int userId);
+        Task<UserDto> AddUser(UserDto user);
+        Task DeleteUser(int userId);
     }
 }

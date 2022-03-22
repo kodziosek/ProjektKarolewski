@@ -17,6 +17,7 @@ namespace ProjektKarolewski
                 .ForMember(m => m.Producer, c => c.MapFrom(s => s.Producer.Name));
 
             CreateMap<Ward, WardDto>();
+            CreateMap<Role, RoleDto>();
             CreateMap<Producer, ProducerDto>();
             CreateMap<Contract, ContractDto>();
             CreateMap<User, UserDto>()

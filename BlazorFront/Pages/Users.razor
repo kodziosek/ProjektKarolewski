@@ -1,0 +1,189 @@
+﻿@page "/users"
+@using ProjektKarolewski.Models
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using System;
+@using System.IO;
+@inject NavigationManager UriHelper
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+
+
+
+@{
+    var SearchTool = new List<string>() { "Add", "Cancel", "Search" };
+    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
+}
+
+
+<p style="padding-top: 10px">Użytkownicy</p>
+<SfGrid @ref="userEditGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@UserList" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+    <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
+    <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams">
+        <Template>
+            @{
+                var User = (context as UserDto);
+                <div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>ID</label>
+                            <SfNumericTextBox TValue="int" FloatLabelType="FloatLabelType.Always" @bind-Value="@(User.Id)" Enabled=false></SfNumericTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Nazwa użytkownika</label>
+                            <SfTextBox ID="Username" FloatLabelType="FloatLabelType.Always"  @bind-Value="@(User.Username)" ></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Imię</label>
+                            <SfTextBox ID="FirstName" FloatLabelType="FloatLabelType.Always"  @bind-Value="@(User.FirstName)" ></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Nazwisko</label>
+                            <SfTextBox ID="LastName" FloatLabelType="FloatLabelType.Always"  @bind-Value="@(User.LastName)" ></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Hasło</label>
+                            <SfTextBox ID="Password" Type="InputType.Password" FloatLabelType="FloatLabelType.Always"  @bind-Value="@(User.Password)" ></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Potwierdź hasło</label>
+                            <SfTextBox ID="ConfirmPassword" Type="InputType.Password" FloatLabelType="FloatLabelType.Always"  @bind-Value="@(User.ConfirmPassword)" ></SfTextBox>
+                        </div>
+                        <div class="form-group col-md-6">
+                        <label>Uprawnienia</label>
+                           <SfDropDownList DataSource="@Roles" TItem="RoleDto" TValue="int" @bind-Value="@((context as UserDto).RoleId)">
+                                <DropDownListEvents TItem="RoleDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                                <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                             </SfDropDownList>
+                        </div>
+                    </div>
+                </div>
+            }
+        </Template>
+    </GridEditSettings>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+    <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler1" TValue="UserDto"></GridEvents>
+    <GridColumns>
+        <GridColumn AllowAdding="false" Field="@nameof(UserDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn Field="@nameof(UserDto.Username)" HeaderText="Nazwa użytkownika"></GridColumn>
+        <GridColumn Field="@nameof(UserDto.FirstName)" HeaderText="Imię"></GridColumn>
+        <GridColumn Field="@nameof(UserDto.LastName)" HeaderText="Nazwisko"></GridColumn>
+        <GridColumn Visible="false" Field="@nameof(UserDto.Password)" HeaderText="Uprawnienia"></GridColumn>
+        <GridColumn Visible="false" Field="@nameof(UserDto.ConfirmPassword)" HeaderText="Uprawnienia"></GridColumn>
+        <GridColumn Field="@nameof(UserDto.Role)" HeaderText="Uprawnienia">
+            <EditTemplate>
+                <label>Uprawnienia</label>
+                <SfDropDownList DataSource="@Roles" TItem="RoleDto" TValue="int" @bind-Value="@((context as UserDto).RoleId)">
+                    <DropDownListEvents TItem="RoleDto" TValue="int" OnValueSelect="@ValueSelect"></DropDownListEvents>
+                    <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </EditTemplate>
+        </GridColumn>
+        <GridColumn HeaderText="Akcje" Width="110">
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions()
+                     {
+                        IconCss = "e-icons e-edit",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions()
+                     {
+                         IconCss = "e-icons e-delete",
+                         CssClass = "e-flat"
+                     })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+<style>
+    .e-grid .e-headercell {
+        background-color: gray;
+    }
+
+    .e-headercell {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+@code{
+
+    private DialogSettings DialogParams = new DialogSettings { Width = "500px", MinHeight = "600px" };
+
+    public string[] pagerDropdown { get; set; } = new string[] { "5", "10", "15", "20" };
+
+    public string Username;
+
+
+    public List<UserDto> UserList { get; set; }
+    public List<RoleDto> Roles { get; set; }
+
+
+    RoleDto DropDownSelectedRole = new RoleDto();
+
+
+    public SfGrid<UserDto> userEditGrid { get; set; }
+
+    [Inject]
+    public IUserService UserService { get; set; }
+
+    [Inject]
+    public IRoleService RoleService { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        Username = user.Identity.Name;
+        UserList = (await UserService.GetUsers()).ToList();
+        Roles = (await RoleService.GetRoles()).ToList();
+
+    }
+
+
+    public void ValueSelect(Syncfusion.Blazor.DropDowns.SelectEventArgs<RoleDto> args)
+    {
+        DropDownSelectedRole.Id = args.ItemData.Id;
+    }
+
+
+
+    public async void ActionBeginHandler1(ActionEventArgs<UserDto> Args)
+    {
+
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
+        {
+            Args.Data = Args.PreviousData;
+        }
+
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.RoleId = DropDownSelectedRole.Id;
+                await UserService.AddUser(Args.Data);
+                UserList = (await UserService.GetUsers()).ToList();
+                Roles = (await RoleService.GetRoles()).ToList();
+                userEditGrid.Refresh();
+            }
+            else
+            {
+                Args.Data.RoleId = DropDownSelectedRole.Id;
+                await UserService.UpdateUser(Args.Data, Args.Data.Id);
+                UserList = (await UserService.GetUsers()).ToList();
+                Roles = (await RoleService.GetRoles()).ToList();
+                userEditGrid.Refresh();
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await UserService.DeleteUser(Args.Data.Id);
+        }
+    }
+}

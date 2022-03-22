@@ -30,8 +30,16 @@ namespace ProjektKarolewski.Controllers
             return Ok(userDtos);
         }
 
+        [HttpDelete("{userId}")]
+        public ActionResult<UserDto> Delete([FromRoute] int userId)
+        {
+            _accountService.RemoveById(userId);
+
+            return NoContent();
+        }
+
         [HttpPut("{userId}")]
-        public ActionResult<UserDto> Update([FromRoute] int userId, [FromBody] UserDto dto)
+        public ActionResult<UpdateUserDto> Update([FromRoute] int userId, [FromBody] UpdateUserDto dto)
         {
             _accountService.Update(userId, dto);
 
@@ -50,7 +58,7 @@ namespace ProjektKarolewski.Controllers
         public ActionResult RegisterUser([FromBody] RegisterUserDto dto)
         {
             _accountService.RegisterUser(dto);
-            return Ok();
+            return Created($"api/account/register/", JObject.Parse("{'status': 200}"));
         }
 
         [HttpPost("login")]

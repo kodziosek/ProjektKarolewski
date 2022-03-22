@@ -26,15 +26,19 @@ namespace BlazorFront.Services
             var response = await httpClient.PutAsJsonAsync<UserDto>($"api/account/{userId}", user);
             return await response.Content.ReadFromJsonAsync<UserDto>();
         }
-        public async Task<RegisterUserDto> ChangePassword(RegisterUserDto user, int userId)
+        public async Task<UserDto> ChangePassword(UserDto user, int userId)
         {
-            var response = await httpClient.PutAsJsonAsync<RegisterUserDto>($"api/account/changePassword/{userId}", user);
-            return await response.Content.ReadFromJsonAsync<RegisterUserDto>();
+            var response = await httpClient.PutAsJsonAsync<UserDto>($"api/account/changePassword/{userId}", user);
+            return await response.Content.ReadFromJsonAsync<UserDto>();
         }
-        public async Task<RegisterUserDto> AddWard(RegisterUserDto user)
+        public async Task<UserDto> AddUser(UserDto user)
         {
-            var response = await httpClient.PostAsJsonAsync<RegisterUserDto>($"api/user/", user);
-            return await response.Content.ReadFromJsonAsync<RegisterUserDto>();
+            var response = await httpClient.PostAsJsonAsync<UserDto>($"api/account/register", user);
+            return await response.Content.ReadFromJsonAsync<UserDto>();
+        }
+        public async Task DeleteUser(int userId)
+        {
+            await httpClient.DeleteAsync($"api/account/{userId}");
         }
     }
 }

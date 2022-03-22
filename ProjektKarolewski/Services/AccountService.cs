@@ -23,7 +23,8 @@ namespace ProjektKarolewski.Services
         string GenerateJwt(LoginDto dto);
         void ChangePassword(int userId, RegisterUserDto dto);
         IEnumerable<UserDto> GetAll();
-        void Update(int id, UserDto dto);
+        void Update(int id, UpdateUserDto dto);
+        void RemoveById(int userId);
     }
     public class AccountService : IAccountService
     {
@@ -44,6 +45,8 @@ namespace ProjektKarolewski.Services
         {
             var newUser = new User()
             {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
                 Username = dto.Username,
                 RoleId = dto.RoleId
             };
@@ -66,8 +69,23 @@ namespace ProjektKarolewski.Services
             user.PasswordHash = hashedPassword;
             _context.SaveChanges();
         }
+        public void RemoveById(int userId)
+        {
 
-        public void Update(int id, UserDto dto)
+            var user = _context.Users
+                .FirstOrDefault(i => i.Id == userId);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            var userDto = _mapper.Map<UserDto>(user);
+
+            _context.Remove(user);
+            _context.SaveChanges();
+        }
+
+        public void Update(int id, UpdateUserDto dto)
         {
             var user = _context.Users
                 .Include(u => u.Role)
@@ -77,6 +95,10 @@ namespace ProjektKarolewski.Services
             user.FirstName = dto.FirstName;
             user.LastName = dto.LastName;
             user.RoleId = dto.RoleId;
+
+            var hashedPassword = _passwordHasher.HashPassword(user, dto.Password);
+
+            user.PasswordHash = hashedPassword;
 
             _context.SaveChanges();
         }
