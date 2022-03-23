@@ -9,13 +9,13 @@
 @attribute [Authorize(Roles = "Administrator, Manager")]
 
 @{
-    var SearchTool = new List<string>() { "Add", "Cancel", "Search" };
+    var SearchTool = new List<string>() { "Add", "Cancel", "Search", "PdfExport" };
     System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl");
 }
 
 
 
-<SfGrid @ref="deviceGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Device" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
+<SfGrid AllowPdfExport=true @ref="deviceGrid" ClipMode="ClipMode.EllipsisWithTooltip" DataSource="@Device" GridLines="GridLine.Both" AllowTextWrap="true" AllowSorting="true" AllowPaging="true" AllowFiltering="true" Toolbar="@SearchTool">
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridEditSettings Mode="EditMode.Dialog" AllowAdding="true" AllowEditing="true" AllowDeleting="true" Dialog="DialogParams">
@@ -29,7 +29,7 @@
         </FooterTemplate>
     </GridEditSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
-    <GridEvents CommandClicked="CommandClickHandler" OnActionBegin="ActionBeginHandler" TValue="DeviceData"></GridEvents>
+    <GridEvents OnToolbarClick="ToolbarClickHandler"  CommandClicked="CommandClickHandler" OnActionBegin="ActionBeginHandler" TValue="DeviceData"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" IsPrimaryKey="true" Field="@nameof(DeviceData.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(DeviceData.Name)" HeaderText="Nazwa"></GridColumn>
@@ -132,6 +132,14 @@
         Device = Datas.devices;
         Wards = (await WardService.GetWards()).ToList();
         Producers = (await ProducerService.GetProducers()).ToList();
+    }
+
+    public async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+       if (args.Item.Id == "Grid_pdfexport")  //Id is combination of Grid's ID and itemname
+        {
+            await this.deviceGrid.PdfExport();
+        }
     }
 
     public async Task Cancel()

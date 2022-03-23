@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
-
+@inject IAuthenticationService AuthenticationService
+@using Syncfusion.Blazor.Notifications
 
 <SfSidebar Width="265px" DockSize="72px" EnableDock="true" @ref="Sidebar" HtmlAttributes="@HtmlAttribute">
     <ChildContent>
@@ -21,20 +23,53 @@
         font-size: 1.2rem;
         line-height: 45px;">
         Urządzenia medyczne
-        <span style="float:right; padding-right: 10px">Zalogowano: @name</span>
+        <span style="float:right; padding-right: 10px; font-size: 15px;">
+            Zalogowano: @name
+            <SfButton CssClass="e-danger" OnClick=@Logout>Wyloguj</SfButton>
+        </span>
+        
     </div>
     <div class="title">@Body</div>
-
+    <SfToast  ShowCloseButton="true" @ref="ToastObj" Title="Nowe zgłoszenie!" Content="@ToastContent" Timeout="0">
+        <ToastPosition X="left" Y="bottom"></ToastPosition>
+        <ToastEvents Created="@OnCreate"></ToastEvents>
+    </SfToast>
 </div>
 
 
 @code{
+
+    SfToast ToastObj;
+
+    
+
+    private string ToastContent { get; set; }
+
+    private void OnCreate()
+    {
+        this.ToastContent = "Masz nowe nieodczytane zgłoszenie.";
+    }
+
+    [Inject]
+    public ITicketService TicketService { get; set; }
+
+
+
     public string name;
     protected override async Task OnInitializedAsync()
     {
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         name = user.Identity.Name;
+        if((await TicketService.GetAllTickets()).Where(i => (i.TicketStatusId == 1)).Any())
+        {
+            await ToastObj.ShowAsync();
+        }
+    }
+
+    private void Logout()
+    {
+        AuthenticationService.Logout();
     }
     SfSidebar Sidebar;
 
@@ -90,6 +125,9 @@
     /* dockbar icon Style */
     .dockSidebar .grid-view::before {
         content: '\e82d';
+    }
+    .dockSidebar .home::before {
+        content: '\e102';
     }
 
     .dockSidebar .profile::before {
@@ -199,6 +237,18 @@
 
     app {
         display: inherit;
+    }
+
+    .e-toast-container .e-toast .e-toast-message .e-toast-title {
+        background-color: #da1e37;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .e-toast-container .e-toast .e-toast-message .e-toast-content {
+        background-color: #da1e37;
+        font-size: 13px;
+        font-weight: normal;
     }
 
     @@font-face {

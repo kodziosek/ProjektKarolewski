@@ -6,40 +6,62 @@
              <span class="e-icons expand"></span>
              <span class="e-text" title="menu">Menu</span>
          </li>
-         <NavLink class="nlink" rel='nofollow' href="devices">
-             <li class="sidebar-item">
-                 <span class="e-icons drop-down"></span>
-                 <span class="e-text" title="info">Urządzenia</span>
-             </li>
-         </NavLink>
-         <NavLink class="nlink" rel='nofollow' href="deviceedit">
-             <li class="sidebar-item">
-                 <span class="e-icons grid-view"></span>
-                 <span class="e-text" title="deviceedit">Zarządzanie urządzeniami</span>
-             </li>
-         </NavLink>
-         <NavLink class="nlink" rel='nofollow' href="notifications">
-             <li class="sidebar-item">
-                 <span class="e-icons info"></span>
-                 <span class="e-text" title="info">Powiadomienia</span>
-             </li>
-         </NavLink>
-         <NavLink class="nlink" rel='nofollow' href="tickets">
-             <li class="sidebar-item">
-                 <span class="e-icons comment-show"></span>
-                 <span class="e-text" title="info">Moje zgłoszenia</span>
-             </li>
-         </NavLink>
-         <NavLink class="nlink" rel='nofollow' href="settings">
-             <li class="sidebar-item">
-                 <span class="e-icons settings"></span>
-                 <span class="e-text" title="info">Ustawienia</span>
-             </li>
-         </NavLink>
-         <li class="sidebar-item">
-             <span class="e-icons profile"></span>
-             <span class="e-text" title="profile">Użytkownicy</span>
-         </li>
+         <AuthorizeView Roles="Administrator, Manager, User">
+             <NavLink class="nlink" rel='nofollow' href="index">
+                 <li class="sidebar-item">
+                     <span class="e-icons home"></span>
+                     <span class="e-text" title="mainpage">Strona głowna</span>
+                 </li>
+             </NavLink>
+         </AuthorizeView>
+         <AuthorizeView Roles="Administrator, Manager, User">
+             <NavLink class="nlink" rel='nofollow' href="devices">
+                 <li class="sidebar-item">
+                     <span class="e-icons drop-down"></span>
+                     <span class="e-text" title="devices">Urządzenia</span>
+                 </li>
+             </NavLink>
+         </AuthorizeView>
+         <AuthorizeView Roles="Administrator, Manager">
+             <NavLink class="nlink" rel='nofollow' href="deviceedit">
+                 <li class="sidebar-item">
+                     <span class="e-icons grid-view"></span>
+                     <span class="e-text" title="deviceedit">Zarządzanie urządzeniami</span>
+                 </li>
+             </NavLink>
+         </AuthorizeView>
+         <AuthorizeView Roles="Administrator, Manager">
+             <NavLink class="nlink" rel='nofollow' href="notifications">
+                 <li class="sidebar-item">
+                     <span class="e-icons info"></span>
+                     <span class="e-text" title="notifications">Powiadomienia</span>
+                 </li>
+             </NavLink>
+         </AuthorizeView>
+         <AuthorizeView Roles="Administrator, Manager, User">
+             <NavLink class="nlink" rel='nofollow' href="tickets">
+                 <li class="sidebar-item">
+                     <span class="e-icons comment-show"></span>
+                     <span class="e-text" title="tickets">Moje zgłoszenia</span>
+                 </li>
+             </NavLink>
+         </AuthorizeView>
+         <AuthorizeView Roles="Administrator, Manager">
+             <NavLink class="nlink" rel='nofollow' href="settings">
+                 <li class="sidebar-item">
+                     <span class="e-icons settings"></span>
+                     <span class="e-text" title="settings">Ustawienia</span>
+                 </li>
+             </NavLink>
+         </AuthorizeView>   
+         <AuthorizeView Roles="Administrator">
+             <NavLink class="nlink" rel='nofollow' href="users">
+                 <li class="sidebar-item">
+                     <span class="e-icons profile"></span>
+                     <span class="e-text" title="users">Użytkownicy</span>
+                 </li>
+             </NavLink>
+         </AuthorizeView>
      </ul>
 </div>
 

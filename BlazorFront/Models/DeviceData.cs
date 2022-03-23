@@ -22,12 +22,14 @@ namespace BlazorFront.Models
         [MinLength(3, ErrorMessage = "Pole musi zawierać minimum 3 znaki")]
         public string NameInPassport { get; set; }
         [JsonProperty("AcquisitionDate")]
-       // [Required(ErrorMessage = "Pole nie może być puste")]
-        [MinLength(3, ErrorMessage = "Pole musi zawierać minimum 3 znaki")]
+        [MinLength(4, ErrorMessage = "Pole musi mieć format roku RRRR")]
+        [MaxLength(4, ErrorMessage = "Pole musi mieć format roku RRRR")]
+        [RegularExpression("^[0-9 ]*$")]
         public string AcquisitionDate { get; set; }
         [JsonProperty("ProductionDate")]
-        //[Required(ErrorMessage = "Pole nie może być puste")]
-        [MinLength(3, ErrorMessage = "Pole musi zawierać minimum 3 znaki")]
+        [MinLength(4, ErrorMessage = "Pole musi mieć format roku RRRR")]
+        [MaxLength(4, ErrorMessage = "Pole musi mieć format roku RRRR")]
+        [RegularExpression("^[0-9 ]*$")]
         public string ProductionDate { get; set; }
         [JsonProperty("PassportNumber")]
       //  [Required(ErrorMessage = "Pole nie może być puste")]

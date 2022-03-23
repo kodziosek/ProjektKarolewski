@@ -39,7 +39,7 @@ namespace BlazorFront
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSyncfusionBlazor();
+            services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
             services.AddLocalization();
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddBlazoredLocalStorage();

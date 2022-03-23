@@ -66,8 +66,6 @@
 
     public async Task ExecuteLogin()
     {
-        _userForAuthentication.Username = "Test10";
-        _userForAuthentication.Password = "testowe1";
         ShowAuthError = false;
         var result = await AuthenticationService.Login(_userForAuthentication);
         if (!result.IsAuthSuccessful)

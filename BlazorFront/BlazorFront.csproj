@@ -17,6 +17,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Syncfusion.Blazor.Grid" Version="19.4.0.56" />
     <PackageReference Include="Syncfusion.Blazor.Layouts" Version="19.4.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Notifications" Version="19.4.0.56" />
   </ItemGroup>
 
   <ItemGroup>

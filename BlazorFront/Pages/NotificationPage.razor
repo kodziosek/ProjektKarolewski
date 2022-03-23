@@ -7,6 +7,7 @@
 @using System;
 @using System.IO;
 @inject NavigationManager UriHelper
+@attribute [Authorize(Roles = "Administrator, Manager")]
 
 
 
@@ -20,7 +21,7 @@
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
-    <GridEvents OnRecordDoubleClick="RecordDoubleClickHandler" TValue="InspectionDto"></GridEvents>
+    <GridEvents RowDataBound="RowBound" OnRecordDoubleClick="RecordDoubleClickHandler" TValue="InspectionDto"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.DeviceName)" HeaderText="Nazwa urządzenia"></GridColumn>
@@ -37,7 +38,7 @@
     <GridTextWrapSettings WrapMode="WrapMode.Header"></GridTextWrapSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
-    <GridEvents OnRecordDoubleClick="RecordDoubleClickHandler" TValue="TicketDto"></GridEvents>
+    <GridEvents RowDataBound="RowBound" OnRecordDoubleClick="RecordDoubleClickHandler" TValue="TicketDto"></GridEvents>
     <GridColumns>
         <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Nazwa urządzenia"></GridColumn>
@@ -49,13 +50,24 @@
 </SfGrid>
 <style>
     .e-grid .e-headercell {
-        background-color: gray;
+        background-color: #00b4d8;
     }
 
     .e-headercell {
         color: white;
         font-size: 1.5rem;
         font-weight: bold;
+    }
+    .below-1m {
+        background-color: orangered;
+    }
+
+    .below-2m {
+        background-color: yellow;
+    }
+
+    .other {
+        background-color: greenyellow
     }
 </style>
 
@@ -91,8 +103,35 @@
     protected override async Task OnInitializedAsync()
     { 
         Inspections = (await InspectionService.GetAllInspections()).Where(i => (i.InspectionDate.AddYears(i.InspectionFrequency)).CompareTo(DateTime.Now.AddMonths(2)) < 0 ).ToList();
-        Tickets = (await TicketService.GetAllTickets()).Where(i => i.TicketStatusId == 1).ToList();
+        Tickets = (await TicketService.GetAllTickets()).Where(i => (i.TicketStatusId == 1) || (i.TicketStatusId == 2)).ToList();
 
+    }
+
+    public void RowBound(RowDataBoundEventArgs<InspectionDto> args)
+    {
+        if (args.Data.InspectionDate.AddYears(args.Data.InspectionFrequency).CompareTo(DateTime.Now.AddDays(21)) < 0 )
+        {
+            args.Row.AddClass(new string[] { "below-1m" });
+        }
+        else if (args.Data.InspectionDate.AddYears(args.Data.InspectionFrequency).CompareTo(DateTime.Now.AddDays(42)) < 0 )
+        {
+            args.Row.AddClass(new string[] { "below-2m" });
+        }
+        else
+        {
+            args.Row.AddClass(new string[] { "other" });
+        }
+    }
+     public void RowBound(RowDataBoundEventArgs<TicketDto> args)
+    {
+        if (args.Data.TicketStatusId == 1 )
+        {
+            args.Row.AddClass(new string[] { "below-1m" });
+        }
+        else 
+        {
+            args.Row.AddClass(new string[] { "below-2m" });
+        }
     }
     public void RecordDoubleClickHandler(RecordDoubleClickEventArgs<InspectionDto> args)
     {

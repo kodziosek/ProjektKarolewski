@@ -3,7 +3,7 @@
 @using Syncfusion.Blazor.Grids
 @inject NavigationManager UriHelper
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
-@attribute [Authorize(Roles = "Administrator, Manager")]
+@attribute [Authorize(Roles = "Administrator, Manager, User")]
 
 
 @{
@@ -42,7 +42,7 @@
 </SfGrid>
 <style>
     .e-grid .e-headercell {
-        background-color: gray;
+        background-color: #00b4d8;
     }
 
     .e-headercell {

@@ -7,6 +7,7 @@
 @using System.IO;
 @inject NavigationManager UriHelper
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
+@attribute [Authorize(Roles = "Administrator")]
 
 
 
@@ -98,7 +99,7 @@
 </SfGrid>
 <style>
     .e-grid .e-headercell {
-        background-color: gray;
+        background-color: #00b4d8;
     }
 
     .e-headercell {
@@ -167,7 +168,7 @@
             if (Args.Action == "Add")
             {
                 Args.Data.RoleId = DropDownSelectedRole.Id;
-                await UserService.AddUser(Args.Data);
+                var response = await UserService.AddUser(Args.Data); 
                 UserList = (await UserService.GetUsers()).ToList();
                 Roles = (await RoleService.GetRoles()).ToList();
                 userEditGrid.Refresh();
