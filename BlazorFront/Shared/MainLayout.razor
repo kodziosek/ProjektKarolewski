@@ -15,8 +15,8 @@
 
 
 <div id="main-content container-fluid col-md-12">
-    <div id="header" 
-        style="        height: 45px;
+    <div id="header"
+         style="        height: 45px;
         text-align: center;
         color: white;
         background-color: #0096c7;
@@ -27,33 +27,23 @@
             Zalogowano: @name
             <SfButton CssClass="e-danger" OnClick=@Logout>Wyloguj</SfButton>
         </span>
-        
+
     </div>
     <div class="title">@Body</div>
-    <SfToast  ShowCloseButton="true" @ref="ToastObj" Title="Nowe zgłoszenie!" Content="@ToastContent" Timeout="0">
+    <SfToast ShowCloseButton="true" @ref="ToastObj" Title="Nowe zgłoszenie!" Content="Masz nowe nieodczytane zgłoszenie." Timeout="0">
         <ToastPosition X="left" Y="bottom"></ToastPosition>
-        <ToastEvents Created="@OnCreate"></ToastEvents>
     </SfToast>
 </div>
 
 
 @code{
 
+
     SfToast ToastObj;
 
-    
-
-    private string ToastContent { get; set; }
-
-    private void OnCreate()
-    {
-        this.ToastContent = "Masz nowe nieodczytane zgłoszenie.";
-    }
 
     [Inject]
     public ITicketService TicketService { get; set; }
-
-
 
     public string name;
     protected override async Task OnInitializedAsync()
@@ -61,7 +51,7 @@
         var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         var user = authstate.User;
         name = user.Identity.Name;
-        if((await TicketService.GetAllTickets()).Where(i => (i.TicketStatusId == 1)).Any())
+        if (user.IsInRole("Manager") && (await TicketService.GetAllTickets()).Where(i => (i.TicketStatusId == 1)).Any())
         {
             await ToastObj.ShowAsync();
         }
@@ -157,6 +147,8 @@
     .dockSidebar .settings::before {
         content: '\e880';
     }
+
+    
 
     .e-sidebar .expand::before,
     .e-sidebar.e-right.e-open .expand::before {

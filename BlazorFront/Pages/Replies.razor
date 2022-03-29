@@ -124,10 +124,6 @@
             Args.Data.ReplyDate = DateTime.Now;
         }
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
 
         int DevId = Int32.Parse(DeviceId);
         int TickId = Int32.Parse(TicketId);
@@ -144,7 +140,6 @@
             }
             else
             {
-                Args.Data.ReplyProtocol = filename;
                 await ReplyService.UpdateReply(Args.Data, DevId, TickId, Args.Data.Id);
                 Reply = (await ReplyService.GetReplyByTicket(DevId, TickId)).ToList();
                 Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
@@ -154,6 +149,7 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await ReplyService.DeleteReply(TickId, DevId, Args.Data.Id);
+            replyEditGrid.Refresh();
         }
     }
 }

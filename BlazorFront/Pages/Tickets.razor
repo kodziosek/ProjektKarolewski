@@ -149,13 +149,9 @@
             Args.Data.Notifier = Username;
             Args.Data.TicketDate = DateTime.Now;
             Args.Data.TicketStatusId = 1;
-            Args.Data.DeviceId = 1;
+            DropDownSelectedTicketStatus.Id = 1;
         }
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
 
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
@@ -173,7 +169,6 @@
             }
             else
             {
-                Args.Data.Notifier = Username;
                 await TicketService.UpdateTicket(Args.Data, Args.Data.DeviceId, Args.Data.Id);
                 TicketsList = (await TicketService.GetAllTickets()).Where(i => i.Notifier == Username).ToList();
                 TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
@@ -185,6 +180,7 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await TicketService.DeleteTicket(Args.Data.Id, Args.Data.DeviceId);
+            ticketEditGrid.Refresh();
         }
     }
 }

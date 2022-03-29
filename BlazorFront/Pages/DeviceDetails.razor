@@ -219,9 +219,9 @@
     {
         if (args.CommandColumn.Type == CommandButtonType.None)
         {
-             UriHelper.NavigateTo($"/devicedetails/{args.RowData.DeviceId}/tickets/{args.RowData.Id}/replies");
+            UriHelper.NavigateTo($"/devicedetails/{args.RowData.DeviceId}/tickets/{args.RowData.Id}/replies");
         }
-        
+
     }
 
     public async void ActionBeginHandler(ActionEventArgs<InspectionDto> Args)
@@ -231,10 +231,6 @@
             Args.Data.InspectionDate = DateTime.Now;
         }
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
 
         int DevId = Int32.Parse(DeviceId);
 
@@ -264,6 +260,7 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await InspectionService.DeleteInspection(Args.Data.Id, DevId);
+            inspectionEditGrid.Refresh();
         }
     }
     public async void ActionBeginHandler1(ActionEventArgs<TicketDto> Args)
@@ -274,12 +271,10 @@
             Args.Data.Notifier = Username;
             Args.Data.TicketDate = DateTime.Now;
             Args.Data.TicketStatusId = 1;
+            DropDownSelectedTicketStatus.Id = 1;
         }
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
+
 
         int DevId = Int32.Parse(DeviceId);
 
@@ -295,7 +290,6 @@
             }
             else
             {
-                Args.Data.Notifier = Username;
                 await TicketService.UpdateTicket(Args.Data, DevId, Args.Data.Id);
                 Tickets = (await TicketService.GetTicketByDevice(DevId)).ToList();
                 TicketStatuses = (await TicketStatusService.GetTicketStatuses()).ToList();
@@ -305,6 +299,7 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await TicketService.DeleteTicket(Args.Data.Id, DevId);
+            ticketEditGrid.Refresh();
         }
     }
 }

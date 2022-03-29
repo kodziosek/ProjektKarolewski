@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <StartupObject>ProjektKarolewski.Program</StartupObject>
+    <UserSecretsId>7168272a-0dba-476d-bd74-42d60b114545</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

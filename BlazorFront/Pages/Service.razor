@@ -118,11 +118,6 @@
     {
 
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
-
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
@@ -146,6 +141,7 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await ServiceService.DeleteService(Args.Data.Id);
+            serviceEditGrid.Refresh();
         }
     }
 }

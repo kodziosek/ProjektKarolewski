@@ -88,12 +88,6 @@
     {
 
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
-
-
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
             if (Args.Action == "Add")
@@ -112,6 +106,7 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await WardService.DeleteWard(Args.Data.Id);
+            wardEditGrid.Refresh();
         }
     }
 }

@@ -88,10 +88,6 @@
     {
 
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
 
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
@@ -112,6 +108,8 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await ProducerService.DeleteProducer(Args.Data.Id);
+            producerEditGrid.Refresh();
+
         }
     }
 }

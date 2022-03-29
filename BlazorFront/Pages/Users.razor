@@ -157,10 +157,6 @@
     {
 
 
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BeginEdit))
-        {
-            Args.Data = Args.PreviousData;
-        }
 
 
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
@@ -168,7 +164,7 @@
             if (Args.Action == "Add")
             {
                 Args.Data.RoleId = DropDownSelectedRole.Id;
-                var response = await UserService.AddUser(Args.Data); 
+                var response = await UserService.AddUser(Args.Data);
                 UserList = (await UserService.GetUsers()).ToList();
                 Roles = (await RoleService.GetRoles()).ToList();
                 userEditGrid.Refresh();
@@ -185,6 +181,7 @@
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             await UserService.DeleteUser(Args.Data.Id);
+            userEditGrid.Refresh();
         }
     }
 }
