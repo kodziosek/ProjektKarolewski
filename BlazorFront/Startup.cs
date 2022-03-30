@@ -37,6 +37,8 @@ namespace BlazorFront
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            string backEndLink = Configuration.GetValue<string>("Localhost");
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
@@ -65,55 +67,55 @@ namespace BlazorFront
             });
                 services.AddHttpClient<IDeviceService, DeviceService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IWardService, WardService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IProducerService, ProducerService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IInspectionService, InspectionService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IInspectionTypeService, InspectionTypeService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IServiceService, ServiceService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<ITicketService, TicketService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<ITicketStatusService, TicketStatusService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IReplyService, ReplyService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IUserService, UserService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IContractService, ContractService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddHttpClient<IRoleService, RoleService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri(backEndLink);
             });
             services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 

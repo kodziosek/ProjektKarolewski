@@ -8,8 +8,11 @@ namespace ProjektKarolewski.Entities
 {
     public class ProjektDbContext : DbContext
     {
-        private string _connectionString =
-            "Server=DESKTOP-O14MHG2; Database=ProjektDb;Trusted_Connection=True";
+        public ProjektDbContext(DbContextOptions<ProjektDbContext> options) : base(options)
+        {
+
+        }
+
         public DbSet<Device> Devices { get; set; }
         public DbSet<Ward> Wards { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
@@ -106,11 +109,6 @@ namespace ProjektKarolewski.Entities
                 .Property(r => r.Name)
                 .IsRequired()
                 .HasMaxLength(30);
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
         }
     }
 }

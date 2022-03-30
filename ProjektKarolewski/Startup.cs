@@ -20,6 +20,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjektKarolewski
 {
@@ -57,7 +58,7 @@ namespace ProjektKarolewski
             });
 
             services.AddControllers().AddFluentValidation();
-            services.AddDbContext<ProjektDbContext>();
+            services.AddDbContext<ProjektDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("LocalDbCS")));
             services.AddScoped<DeviceSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
             services.AddScoped<IDeviceService, DeviceService>();

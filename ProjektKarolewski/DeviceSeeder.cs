@@ -1,4 +1,5 @@
-﻿using ProjektKarolewski.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjektKarolewski.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,17 @@ namespace ProjektKarolewski
         {
             if (_dbContext.Database.CanConnect())
             {
-                if(!_dbContext.Roles.Any())
+                //var pendingMigration = _dbContext.Database.GetPendingMigrations();
+                //if(pendingMigration != null && pendingMigration.Any())
+                //{
+                //    _dbContext.Database.Migrate();
+                //}
+                /*if(!_dbContext.Roles.Any())
                 {
                     var roles = GetRoles();
                     _dbContext.Roles.AddRange(roles);
                     _dbContext.SaveChanges();
-                }
+                }*/
                 /*if (!_dbContext.Devices.Any())
                 {
                     var devices = GetDevices();
