@@ -26,7 +26,7 @@
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents CommandClicked="CommandClickHandler" OnActionBegin="ActionBeginHandler1" TValue="TicketDto"></GridEvents>
     <GridColumns>
-        <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn AllowEditing="false" AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Nazwa urządzenia">
             <EditTemplate>
                 <label>Urządzenie</label>

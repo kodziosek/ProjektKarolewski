@@ -23,7 +23,7 @@
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents RowDataBound="RowBound" OnRecordDoubleClick="RecordDoubleClickHandler" TValue="InspectionDto"></GridEvents>
     <GridColumns>
-        <GridColumn AllowAdding="false" Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn AllowAdding="false" AllowEditing="false" Field="@nameof(InspectionDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.DeviceName)" HeaderText="Nazwa urządzenia"></GridColumn>
         <GridColumn Format="d" Field="@nameof(InspectionDto.InspectionDate)" HeaderText="Data przeglądu"></GridColumn>
         <GridColumn Field="@nameof(InspectionDto.InspectionFrequency)" HeaderText="Częstotliwość przeglądu" Width="200"></GridColumn>
@@ -40,7 +40,7 @@
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents RowDataBound="RowBound" OnRecordDoubleClick="RecordDoubleClickHandler" TValue="TicketDto"></GridEvents>
     <GridColumns>
-        <GridColumn AllowAdding="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn AllowAdding="false" AllowEditing="false" Field="@nameof(TicketDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.DeviceName)" HeaderText="Nazwa urządzenia"></GridColumn>
         <GridColumn Format="d" Field="@nameof(TicketDto.TicketDate)" HeaderText="Data zgłoszenia"></GridColumn>
         <GridColumn Field="@nameof(TicketDto.TicketDescription)" HeaderText="Opis zgłoszenia" Width="200"></GridColumn>

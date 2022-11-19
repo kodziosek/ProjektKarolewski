@@ -26,7 +26,7 @@
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" TValue="ReplyDto"></GridEvents>
     <GridColumns>
-        <GridColumn AllowAdding="false" Field="@nameof(ReplyDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn AllowEditing="false" AllowAdding="false" Field="@nameof(ReplyDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Format="d" Field="@nameof(ReplyDto.ReplyDate)" HeaderText="Data odpowiedzi"></GridColumn>
         <GridColumn Field="@nameof(ReplyDto.ReplyDescription)" HeaderText="Treść odpowiedzi" Width="200"></GridColumn>
         <GridColumn Field="@nameof(ReplyDto.ReplyProtocol)" HeaderText="Skan">

@@ -66,7 +66,7 @@
     <GridPageSettings PageSize="5" PageCount="4" PageSizes="@pagerDropdown"></GridPageSettings>
     <GridEvents OnActionBegin="ActionBeginHandler1" TValue="UserDto"></GridEvents>
     <GridColumns>
-        <GridColumn AllowAdding="false" Field="@nameof(UserDto.Id)" HeaderText="ID" Width="80"></GridColumn>
+        <GridColumn AllowEditing="false" AllowAdding="false" Field="@nameof(UserDto.Id)" HeaderText="ID" Width="80"></GridColumn>
         <GridColumn Field="@nameof(UserDto.Username)" HeaderText="Nazwa użytkownika"></GridColumn>
         <GridColumn Field="@nameof(UserDto.FirstName)" HeaderText="Imię"></GridColumn>
         <GridColumn Field="@nameof(UserDto.LastName)" HeaderText="Nazwisko"></GridColumn>
